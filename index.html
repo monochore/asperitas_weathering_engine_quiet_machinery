@@ -6,7 +6,7 @@
 <title>ASPERITAS // WEATHERING ENGINE</title>
 <style>
   /* =========================================================================
-     01. QUIET MACHINERY // LOCKED ETCHED MINERAL DESIGN TOKENS
+     01. DESIGN TOKENS & BASE RESET
      ========================================================================= */
   :root {
     --bg: #050605;
@@ -19,7 +19,8 @@
     --c-green: #4e8f60;
     --c-amber: #a67a3c;
     --c-cyan: #487e9e;
-    --c-red: #9e4b4b;
+    --c-red: #c45858;
+    --c-red-dim: #9e4b4b;
     --c-sage: #6a8778;
     --c-slate: #62788c;
     --vellum: #e6e3da;
@@ -34,7 +35,8 @@
   }
 
   html, body, #bg-viz-canvas, #tank-canvas, #chassis, .column, .oled-container,
-  .knob-container, #matrix-deck, button, .m-cell, .m-len, .ascii-scrub, .cycle-box {
+  .knob-container, #matrix-deck, button, .m-cell, .m-len, .m-dice-sq,
+  .ascii-scrub, .cycle-box {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -58,7 +60,7 @@
   }
 
   /* =========================================================================
-     02. OPTIONAL FULL-FRAME BACKDROP VISUALISER & STATUS TOAST
+     02. FULL-FRAME BACKDROP VISUALISER & OVERLAYS
      ========================================================================= */
   #bg-viz-canvas {
     position: fixed;
@@ -134,7 +136,7 @@
   }
 
   /* =========================================================================
-     03. ETCHED MINERAL HARDWARE CHASSIS
+     03. CHASSIS LAYOUT
      ========================================================================= */
   #chassis-wrap {
     position: relative;
@@ -196,7 +198,7 @@
 
   .panel-core {
     display: grid;
-    grid-template-columns: 214px 1fr 1.15fr 1fr;
+    grid-template-columns: 216px 1fr 1.15fr 1fr;
     border-left: 1px solid var(--col-div);
     border-right: 1px solid var(--col-div);
     min-width: 0;
@@ -230,7 +232,7 @@
   .col-header::after  { content: ' ·'; color: var(--border-main); }
 
   /* =========================================================================
-     04. COLUMN I: TIGHTENED SOURCE, OLED + BPM & DEGRADED AMBER BUFFERS
+     04. COLUMN I: SOURCE, OLED + BPM & AMBER CAPTURE BUFFERS
      ========================================================================= */
   .oled-container {
     width: 100%;
@@ -426,7 +428,7 @@
   }
 
   /* =========================================================================
-     05. SILK-SCREENED SYNTH POTENTIOMETERS
+     05. ROTARY POTENTIOMETERS
      ========================================================================= */
   .knob-row {
     display: flex;
@@ -488,18 +490,18 @@
     color: var(--vellum);
   }
 
-  .col-src .knob-bezel { stroke: var(--c-green); } .col-src .knob-label { color: var(--c-green); }
-  .col-wea .knob-bezel { stroke: var(--c-amber); } .col-wea .knob-label { color: var(--c-amber); }
-  .col-dee .knob-bezel { stroke: var(--c-cyan); }  .col-dee .knob-label { color: var(--c-cyan); }
-  .col-mac .knob-bezel { stroke: var(--c-red); }   .col-mac .knob-label { color: var(--c-red); }
+  .col-src .knob-bezel { stroke: var(--c-green); }   .col-src .knob-label { color: var(--c-green); }
+  .col-wea .knob-bezel { stroke: var(--c-amber); }   .col-wea .knob-label { color: var(--c-amber); }
+  .col-dee .knob-bezel { stroke: var(--c-cyan); }    .col-dee .knob-label { color: var(--c-cyan); }
+  .col-mac .knob-bezel { stroke: var(--c-red-dim); } .col-mac .knob-label { color: var(--c-red-dim); }
 
   /* =========================================================================
-     06. UTILITY STRIP (A/B MORPH, PRESETS & VIEW)
+     06. UTILITY STRIP (SCATTER, DRIFT, A/B MORPH, PRESETS & VIEW)
      ========================================================================= */
   .utility-strip {
     border-top: 1px solid var(--col-div);
     margin-top: 6px;
-    padding: 4px 6px;
+    padding: 5px 6px;
     background: rgba(4, 5, 4, 0.85);
     display: flex;
     align-items: center;
@@ -507,20 +509,26 @@
     flex-wrap: wrap;
   }
 
+  .utility-strip .oled-btn {
+    flex: 0 0 auto;
+    padding: 3px 8px;
+    font-size: 8px;
+  }
+
   .util-group {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
   }
 
   .ascii-scrub {
-    height: 18px;
+    height: 19px;
     background: var(--well);
     border: 1px solid #35453c;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 4px;
+    padding: 0 5px;
     font-size: 8.5px;
     letter-spacing: 0px;
     color: var(--vellum);
@@ -530,7 +538,7 @@
   }
 
   /* =========================================================================
-     07. WEATHERING MATRIX SEQUENCER + ALWAYS-ACTIVE ASCII STRIP
+     07. WEATHERING MATRIX SEQUENCER + ASCII WEATHERING STRIP
      ========================================================================= */
   #matrix-deck {
     border-top: 1px solid var(--col-div);
@@ -574,7 +582,7 @@
     font-family: var(--mono);
     font-size: 8px;
     font-weight: bold;
-    padding: 3px 5px;
+    padding: 3px 6px;
     cursor: pointer;
     text-transform: uppercase;
     white-space: nowrap;
@@ -662,15 +670,16 @@
   .m-cell {
     flex: 1;
     min-width: 2px;
-    height: 14px;
+    height: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 9px;
+    font-size: 9.5px;
     font-weight: bold;
     color: #2f3d35;
     cursor: pointer;
     border-right: 1px solid transparent;
+    touch-action: none;
   }
   .m-cell.beat-mark {
     border-left: 1px solid #1b241f;
@@ -681,10 +690,20 @@
   .m-lane[data-lane="0"] .m-cell.on { color: var(--c-green); }
   .m-lane[data-lane="1"] .m-cell.on { color: var(--c-amber); }
   .m-lane[data-lane="2"] .m-cell.on { color: var(--c-cyan); }
-  .m-lane[data-lane="3"] .m-cell.on { color: var(--c-red); }
+  .m-lane[data-lane="3"] .m-cell.on { color: var(--c-red-dim); }
+
+  /* Modulated steps highlighted clearly in red */
+  .m-cell.on.modded {
+    color: var(--c-red) !important;
+    background: rgba(196, 88, 88, 0.16);
+  }
 
   .m-cell.head {
-    background: rgba(230, 227, 218, 0.14);
+    background: rgba(230, 227, 218, 0.15);
+    color: var(--vellum) !important;
+  }
+  .m-cell.head.modded {
+    background: rgba(196, 88, 88, 0.34);
     color: var(--vellum) !important;
   }
 
@@ -701,9 +720,25 @@
     color: var(--vellum);
   }
 
+  .symbology-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 7.5px;
+    color: var(--text-dim);
+    padding: 2px 2px 0 2px;
+    border-top: 1px solid #141c17;
+    margin-top: 2px;
+    letter-spacing: 0.6px;
+  }
+  .sym-red {
+    color: var(--c-red);
+    font-weight: bold;
+  }
+
   #tank-canvas {
     width: 100%;
-    height: 88px;
+    height: 92px;
     display: block;
     background: #030403;
     border-top: 1px solid var(--border-inner);
@@ -752,7 +787,7 @@
     </div>
   </div>
 
-  <!-- ETCHED MINERAL HARDWARE CHASSIS -->
+  <!-- HARDWARE CHASSIS -->
   <div id="chassis-wrap">
     <div id="chassis">
 
@@ -769,7 +804,7 @@
             <div class="oled-container">
               <div class="scope-header-bar">
                 <canvas id="scope" width="120" height="32" title="Toggle Waveform / Seismograph"></canvas>
-                <div id="bpm-readout" title="Drag Vertically for Tempo (40-220 BPM)">| | BPM</div>
+                <div id="bpm-readout" title="Reads Sequencer PACE Tempo | Drag Vertically to Adjust PACE">| | BPM</div>
               </div>
 
               <div class="oled-row">
@@ -828,7 +863,6 @@
               </div>
             </div>
 
-            <!-- DEGRADED ASCII AMBER FREEZE BUFFERS -->
             <div class="amber-container">
               <button type="button" class="amber-btn" id="btn-amber1" title="Freeze 2.0s Buffer [1]">
                 <span>AMBER I</span>
@@ -1066,18 +1100,18 @@
       <!-- UTILITY STRIP: SCATTER, DRIFT, A/B MORPH & PRESET CYCLER -->
       <div class="utility-strip">
         <div class="util-group">
-          <button class="oled-btn" id="btn-scatter" style="padding:3px 6px;" title="Randomize Dials [S]">SCATTER</button>
-          <button class="oled-btn" id="btn-drift" style="padding:3px 6px;" title="Organic Parameter Drift">DRIFT</button>
+          <button class="oled-btn" id="btn-scatter" title="Randomize Dials [S]">SCATTER</button>
+          <button class="oled-btn" id="btn-drift" title="Organic Parameter Drift">DRIFT</button>
         </div>
 
         <div class="util-group">
-          <button class="oled-btn" id="btn-a" style="padding:3px 5px;" title="Capture State A">A</button>
+          <button class="oled-btn" id="btn-a" title="Capture State A">A</button>
           <div class="ascii-scrub" id="ab-scrub" title="Drag to Crossfade A / B">[■░░░░░░░]</div>
-          <button class="oled-btn" id="btn-b" style="padding:3px 5px;" title="Capture State B">B</button>
+          <button class="oled-btn" id="btn-b" title="Capture State B">B</button>
         </div>
 
         <div class="util-group" style="flex:1; min-width:140px;">
-          <button class="oled-btn" id="btn-dump" style="flex:0 0 auto; padding:3px 6px;" title="Store Current Preset">DUMP</button>
+          <button class="oled-btn" id="btn-dump" title="Store Current Preset">DUMP</button>
           <div class="cycle-box" style="flex:1;" title="Cycle Stored Presets">
             <button type="button" class="cycle-step" id="btn-preset-prev">&lt;</button>
             <div class="cycle-label" id="preset-label">INITIALIZED</div>
@@ -1085,10 +1119,10 @@
           </div>
         </div>
 
-        <button class="oled-btn" id="btn-expand-viz" style="flex:0 0 auto; padding:3px 7px;" title="Expand Weathering Tank to Full-Frame Backdrop [V]">[V] EXPAND</button>
+        <button class="oled-btn" id="btn-expand-viz" title="Expand Weathering Tank to Full-Frame Backdrop [V]">[V] EXPAND</button>
       </div>
 
-      <!-- WEATHERING MATRIX SEQUENCER + ALWAYS-ACTIVE ASCII STRIP -->
+      <!-- WEATHERING MATRIX SEQUENCER + GEOMETRIC AMBER WEATHERING STRIP -->
       <div id="matrix-deck">
         <div class="matrix-header">
           <span class="matrix-title">WEATHERING MATRIX</span>
@@ -1102,9 +1136,8 @@
 
           <div class="matrix-controls">
             <button type="button" class="m-btn" id="btn-seq-toggle" title="Start / Stop Sequencer [Space]">SEQ: OFF</button>
-            <button type="button" class="m-btn active-vel" id="btn-seq-mod" title="Toggle Per-Step Parameter Modulation on Selected Lane">MOD</button>
-            <button type="button" class="m-btn" id="btn-seq-hold" title="Hold / Freeze Step Playhead">HOLD</button>
-            <button type="button" class="m-btn" id="btn-seq-dice" title="Roll Random Steps &amp; Per-Step Mod Values for All Lanes">DICE</button>
+            <button type="button" class="m-btn" id="btn-seq-mod" title="Edit Mode: Click Steps or Roll Lane Dice to Toggle Red Step Modulation">MOD</button>
+            <button type="button" class="m-btn" id="btn-seq-hold" title="Edit Mode: Click Steps to Place Held (=) Gates">HOLD</button>
             <div class="m-btn" id="btn-seq-len" title="Drag Horizontally to Resize Selected Lane (1 - 64 Steps)" style="cursor:ew-resize; touch-action:none;">LEN: 16</div>
             <button type="button" class="m-btn" id="btn-seq-page" title="Cycle 16-Step Page View">PG: 1/1</button>
             <button type="button" class="m-btn" id="btn-seq-clr" title="Clear Selected Lane Steps">CLR</button>
@@ -1112,7 +1145,7 @@
 
           <!-- 4 Mini Rotary Encoders (PACE, SUS, GROW, DRAG) -->
           <div class="mini-knobs-group">
-            <div class="mini-knob-item" id="mk-pace" data-val="0.50" style="color:var(--c-amber);" title="Master Clock &amp; Tempo Multiplier (PACE)">
+            <div class="mini-knob-item" id="mk-pace" data-val="0.50" style="color:var(--c-amber);" title="Master Sequencer Tempo (30 - 210 BPM)">
               <span>PACE</span>
               <svg class="mini-knob-svg" viewBox="0 0 26 26">
                 <circle cx="13" cy="13" r="10" fill="#090c0a" stroke="#a67a3c" stroke-width="1.6"/>
@@ -1133,7 +1166,7 @@
                 <line class="mk-ind" x1="13" y1="13" x2="13" y2="5" stroke="#e6e3da" stroke-width="1.6"/>
               </svg>
             </div>
-            <div class="mini-knob-item" id="mk-drag" data-val="0.00" style="color:var(--c-red);" title="Micro-Timing Swing / Drag (DRAG)">
+            <div class="mini-knob-item" id="mk-drag" data-val="0.00" style="color:var(--c-red-dim);" title="Micro-Timing Swing / Drag (DRAG)">
               <span>DRAG</span>
               <svg class="mini-knob-svg" viewBox="0 0 26 26">
                 <circle cx="13" cy="13" r="10" fill="#090c0a" stroke="#9e4b4b" stroke-width="1.6"/>
@@ -1143,10 +1176,14 @@
           </div>
         </div>
 
-        <!-- 4-LANE DOTTED POLYMETRIC GRID + ALWAYS-ACTIVE ASCII STRIP -->
+        <!-- 4-LANE DOTTED POLYMETRIC GRID + SYMBOLOGY KEY + WEATHERING STRIP -->
         <div class="matrix-grid-box">
           <div id="matrix-lanes"></div>
-          <canvas id="tank-canvas" width="900" height="88" title="Live ASCII Weathering &amp; Amber Strata Strip"></canvas>
+          <div class="symbology-bar">
+            <span>SYMBOLOGY: · REST &nbsp;|&nbsp; | SINGLE &nbsp;|&nbsp; = HELD &nbsp;|&nbsp; <span class="sym-red">RED: MODULATED</span></span>
+            <span id="edit-mode-readout">EDIT: SINGLE STEP</span>
+          </div>
+          <canvas id="tank-canvas" width="900" height="92" title="Real-Time Geometric Amber Weathering Strip"></canvas>
         </div>
       </div>
 
@@ -1261,7 +1298,6 @@
         let raw_in = input ? input[i] : 0;
         if (Number.isNaN(raw_in)) raw_in = 0;
 
-        // Smooth input monitor/bypass gate so live audio can be muted after freezing into Amber
         this.sm_mon = this.slide(this.p.input_mon, 441.0, 441.0, this.sm_mon);
         const in1 = raw_in * this.sm_mon;
 
@@ -1402,7 +1438,6 @@
         const amb1_final = (this.amb_lpf1 * fwd_amt) + (rev1_sig * rev_amt);
         const amb2_final = (this.amb_lpf2 * fwd_amt) + (rev2_sig * rev_amt);
 
-        // Parallel blend of live wet tank + captured Amber I & II buffers
         const parallel_wet = Math.tanh(filtered_wet + (amb1_final * this.sm_amber) + (amb2_final * this.sm_amber2));
 
         const tide_alpha = Math.max(0.001, Math.min(1.0, (400.0 / sr) * this.TWOPI));
@@ -1410,7 +1445,6 @@
         const tide_low = this.tide_lpf;
         const tide_high = parallel_wet - tide_low;
 
-        // TIDE LFO locked to BPM * PACE tempo multiplier
         this.ph_tide = (this.ph_tide + ((0.05 + (n_tide * 0.25)) * tempoMult) / sr) % 1.0;
         const tide_lfo = Math.sin(this.ph_tide * this.TWOPI);
         const pulse_low = (tide_lfo * 0.5) + 0.5;
@@ -1424,7 +1458,6 @@
         const compressed_wet = tided_wet * (1.0 * (1.0 - n_distill) + (gain_reduction * 3.0) * n_distill);
         const distilled_wet = Math.tanh(compressed_wet);
 
-        // VEIL equal-power blend between live incoming audio (in1) and wet/captured audio
         const dry_level = Math.cos(n_veil * Math.PI * 0.5);
         const wet_level = Math.sin(n_veil * Math.PI * 0.5);
 
@@ -1442,10 +1475,18 @@
   `;
 
   /* ===========================================================================
-     02. STATE & POLYMETRIC WEATHERING MATRIX CONFIGURATION
+     02. APPLICATION STATE & POLYMETRIC SEQUENCER DATA
      =========================================================================== */
   function clamp(v, lo, hi) {
     return v < lo ? lo : (v > hi ? hi : v);
+  }
+
+  // PACE (0.00 - 1.00) is the single source of truth for BPM (30 - 210 BPM)
+  function paceToBpm(paceVal) {
+    return Math.round(30 + clamp(paceVal, 0, 1) * 180);
+  }
+  function bpmToPace(bpmVal) {
+    return clamp((bpmVal - 30) / 180, 0, 1);
   }
 
   const state = {
@@ -1466,26 +1507,29 @@
     scopeMode: 0,
     expandViz: false,
 
-    bpm: 112,
     seqRunning: false,
-    seqHold: false,
+    modEditMode: false,   // When ON, clicking steps or lane dice toggles red modulation
+    holdEditMode: false,  // When ON, clicking steps toggles held (=) gates
     selectedLaneIdx: 0,
     pageIdx: 0,
     seqTick: 0,
     seqAccumSec: 0,
 
     miniParams: {
-      pace: 0.50,
+      pace: 0.50, // 120 BPM
       sus:  0.50,
       grow: 0.00,
       drag: 0.00
     },
 
+    // steps: 0=off, 1=single (|), 2=held (=)
+    // modFlags: 0=normal, 1=red modulated step
+    // modVals: 0.15..0.95 per-step modulation intensity
     lanes: [
-      { id: 'sublimate', roman: 'I.',   color: '#4e8f60', len: 16, mod: true, steps: new Uint8Array(64), modVals: new Float32Array(64) },
-      { id: 'undertow',  roman: 'II.',  color: '#a67a3c', len: 12, mod: true, steps: new Uint8Array(64), modVals: new Float32Array(64) },
-      { id: 'tide',      roman: 'III.', color: '#487e9e', len: 14, mod: true, steps: new Uint8Array(64), modVals: new Float32Array(64) },
-      { id: 'transmute', roman: 'IV.',  color: '#9e4b4b', len: 16, mod: true, steps: new Uint8Array(64), modVals: new Float32Array(64) }
+      { id: 'sublimate', roman: 'I.',   color: '#4e8f60', len: 16, steps: new Uint8Array(64), modFlags: new Uint8Array(64), modVals: new Float32Array(64) },
+      { id: 'undertow',  roman: 'II.',  color: '#a67a3c', len: 12, steps: new Uint8Array(64), modFlags: new Uint8Array(64), modVals: new Float32Array(64) },
+      { id: 'tide',      roman: 'III.', color: '#487e9e', len: 14, steps: new Uint8Array(64), modFlags: new Uint8Array(64), modVals: new Float32Array(64) },
+      { id: 'transmute', roman: 'IV.',  color: '#9e4b4b', len: 16, steps: new Uint8Array(64), modFlags: new Uint8Array(64), modVals: new Float32Array(64) }
     ],
 
     micDevices: [{ deviceId: '', label: 'DEFAULT INPUT' }],
@@ -1500,18 +1544,48 @@
     abMix: 0
   };
 
-  function randomizeLaneSteps(lane, density = 0.36) {
-    for (let s = 0; s < 64; s++) {
-      const on = Math.random() < density ? 1 : 0;
-      lane.steps[s] = on;
-      lane.modVals[s] = on ? (0.18 + Math.random() * 0.78) : 0;
+  function rollLaneDice(lane) {
+    if (state.modEditMode) {
+      // Roll red modulation flags & depths across active steps (and seed steps if lane is empty)
+      let activeCount = 0;
+      for (let s = 0; s < lane.len; s++) if (lane.steps[s] > 0) activeCount++;
+      if (activeCount === 0) {
+        for (let s = 0; s < 64; s++) {
+          lane.steps[s] = Math.random() < 0.34 ? 1 : 0;
+        }
+      }
+      for (let s = 0; s < 64; s++) {
+        if (lane.steps[s] > 0 && Math.random() < 0.55) {
+          lane.modFlags[s] = 1;
+          lane.modVals[s] = 0.20 + Math.random() * 0.78;
+        } else {
+          lane.modFlags[s] = 0;
+          lane.modVals[s] = 0;
+        }
+      }
+      showToast(`${lane.id.toUpperCase()} // RED MOD STEPS ROLLED`);
+    } else {
+      // Roll single triggers (|) and occasional held gates (=)
+      for (let s = 0; s < 64; s++) {
+        const r = Math.random();
+        if (r < 0.26) {
+          lane.steps[s] = 1;
+        } else if (r < 0.35) {
+          lane.steps[s] = 2;
+        } else {
+          lane.steps[s] = 0;
+          lane.modFlags[s] = 0;
+        }
+      }
+      showToast(`${lane.id.toUpperCase()} // STEPS ROLLED`);
     }
   }
 
-  // Seed initial musical step patterns + per-step modulation values
-  state.lanes.forEach((lane, idx) => {
-    randomizeLaneSteps(lane, 0.30 + idx * 0.03);
-  });
+  // Initial subtle musical pattern on boot
+  [0, 6, 11].forEach(i => { state.lanes[0].steps[i] = 1; });
+  [4, 9].forEach(i => { state.lanes[1].steps[i] = 1; state.lanes[1].modFlags[i] = 1; state.lanes[1].modVals[i] = 0.65; });
+  [0, 5, 10].forEach(i => { state.lanes[2].steps[i] = 2; });
+  [3, 12].forEach(i => { state.lanes[3].steps[i] = 1; state.lanes[3].modFlags[i] = 1; state.lanes[3].modVals[i] = 0.55; });
 
   /* ===========================================================================
      03. TOAST & AUDIO ENGINE WIRING
@@ -1545,9 +1619,8 @@
   }
 
   function syncTempoToWorklet() {
-    const paceMult = 0.25 + state.miniParams.pace * 2.75; // 0.25x to 3.0x
-    const bpmScale = (state.bpm / 112.0) * paceMult;
-    sendParam('tempo_mult', state.seqRunning ? bpmScale : (state.bpm / 112.0));
+    const bpm = paceToBpm(state.miniParams.pace);
+    sendParam('tempo_mult', bpm / 120.0);
   }
 
   function setKnobValue(knobEl, val, updateBase = true) {
@@ -1700,19 +1773,29 @@
   }
 
   /* ===========================================================================
-     05. POLYMETRIC WEATHERING MATRIX SEQUENCER
+     05. STABLE-DOM POLYMETRIC MATRIX SEQUENCER (ZERO CLICK DROPS)
      =========================================================================== */
   const bpmEl = document.getElementById('bpm-readout');
   const matrixLanesEl = document.getElementById('matrix-lanes');
+  const editModeReadout = document.getElementById('edit-mode-readout');
 
-  function updateBpmUI() {
+  // Persistent DOM cache so playback ticks NEVER destroy elements mid-click
+  const matrixDom = [];
+
+  function updateBpmAndPaceUI() {
+    const bpm = paceToBpm(state.miniParams.pace);
     if (!state.seqRunning) {
       bpmEl.textContent = '| | BPM';
       bpmEl.classList.remove('active');
     } else {
-      bpmEl.textContent = `${state.bpm} BPM`;
+      bpmEl.textContent = `${bpm} BPM`;
       bpmEl.classList.add('active');
     }
+
+    const paceEl = document.getElementById('mk-pace');
+    const paceInd = paceEl.querySelector('.mk-ind');
+    const ang = -135 + state.miniParams.pace * 270;
+    paceInd.setAttribute('transform', `rotate(${ang.toFixed(1)}, 13, 13)`);
     syncTempoToWorklet();
   }
 
@@ -1725,13 +1808,24 @@
       if (i === state.selectedLaneIdx) btn.classList.add(laneColors[i]);
     }
 
-    document.getElementById('btn-seq-mod').classList.toggle('active-vel', selLane.mod);
-    document.getElementById('btn-seq-hold').classList.toggle('active-amber', state.seqHold);
+    document.getElementById('btn-seq-mod').classList.toggle('active-red', state.modEditMode);
+    document.getElementById('btn-seq-hold').classList.toggle('active-amber', state.holdEditMode);
     document.getElementById('btn-seq-len').textContent = `LEN: ${selLane.len}`;
 
     const maxPages = Math.max(1, Math.ceil(selLane.len / 16));
     if (state.pageIdx >= maxPages) state.pageIdx = 0;
     document.getElementById('btn-seq-page').textContent = `PG: ${state.pageIdx + 1}/${maxPages}`;
+
+    if (state.modEditMode) {
+      editModeReadout.textContent = 'EDIT: MODULATION (RED)';
+      editModeReadout.style.color = 'var(--c-red)';
+    } else if (state.holdEditMode) {
+      editModeReadout.textContent = 'EDIT: HELD GATE (=)';
+      editModeReadout.style.color = 'var(--c-amber)';
+    } else {
+      editModeReadout.textContent = 'EDIT: SINGLE STEP (|)';
+      editModeReadout.style.color = 'var(--text-dim)';
+    }
   }
 
   function restoreModulatedBaseParams() {
@@ -1740,9 +1834,10 @@
     });
   }
 
-  function renderMatrixGrid() {
+  // Built ONCE on boot; pointerdown guarantees immediate desktop & touch input
+  function buildMatrixGridDOM() {
     matrixLanesEl.innerHTML = '';
-    const pageOffset = state.pageIdx * 16;
+    matrixDom.length = 0;
 
     state.lanes.forEach((lane, lIdx) => {
       const row = document.createElement('div');
@@ -1752,66 +1847,69 @@
       const tag = document.createElement('div');
       tag.className = 'm-lane-tag';
       tag.style.color = lane.color;
-      tag.innerHTML = `<span>${lane.roman.padEnd(4, ' ')}</span><span class="m-dice-sq" title="Roll Random Steps &amp; Per-Step Mod Values for ${lane.id.toUpperCase()}">⚄</span>`;
 
-      tag.querySelector('span:first-child').addEventListener('click', () => {
+      const romanSpan = document.createElement('span');
+      romanSpan.textContent = lane.roman.padEnd(4, ' ');
+      romanSpan.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
         state.selectedLaneIdx = lIdx;
         syncMatrixHeaderUI();
-        renderMatrixGrid();
+        updateMatrixGridDOM();
       });
 
-      tag.querySelector('.m-dice-sq').addEventListener('click', (e) => {
+      const diceSq = document.createElement('span');
+      diceSq.className = 'm-dice-sq';
+      diceSq.textContent = '⚄';
+      diceSq.title = `Roll Steps (or Red Mod Steps when MOD is ON) for ${lane.id.toUpperCase()}`;
+      diceSq.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
         e.stopPropagation();
-        randomizeLaneSteps(lane, 0.36);
-        renderMatrixGrid();
-        showToast(`${lane.id.toUpperCase()} // DICE & MOD ROLLED`);
+        rollLaneDice(lane);
+        updateMatrixGridDOM();
       });
+
+      tag.appendChild(romanSpan);
+      tag.appendChild(diceSq);
 
       const stepsRow = document.createElement('div');
       stepsRow.className = 'm-steps-row';
-      const activeStep = state.seqRunning ? (state.seqTick % lane.len) : -1;
+      const cells = [];
 
       for (let col = 0; col < 16; col++) {
-        const stepIdx = pageOffset + col;
         const cell = document.createElement('div');
-        const isBeat = (col % 4 === 0);
-        const inRange = stepIdx < lane.len;
-        const isOn = inRange && lane.steps[stepIdx] === 1;
-        const isHead = inRange && (stepIdx === activeStep);
+        cell.className = 'm-cell' + (col % 4 === 0 ? ' beat-mark' : '');
+        cell.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          const stepIdx = state.pageIdx * 16 + col;
+          if (stepIdx >= lane.len) return;
 
-        cell.className = 'm-cell' +
-          (isBeat ? ' beat-mark' : '') +
-          (isOn ? ' on' : '') +
-          (isHead ? ' head' : '');
-
-        if (!inRange) {
-          cell.textContent = ' ';
-          cell.style.cursor = 'default';
-        } else if (isHead && isOn) {
-          cell.textContent = '[|]';
-        } else if (isOn) {
-          // Show taller bar for high per-step mod value, shorter bar for subtle mod
-          cell.textContent = (lane.mod && lane.modVals[stepIdx] > 0.55) ? '┃' : '|';
-        } else {
-          cell.textContent = '·';
-        }
-
-        if (inRange) {
-          cell.addEventListener('click', () => {
-            const nextState = lane.steps[stepIdx] ? 0 : 1;
-            lane.steps[stepIdx] = nextState;
-            if (nextState === 1 && lane.modVals[stepIdx] <= 0.01) {
-              lane.modVals[stepIdx] = 0.25 + Math.random() * 0.70;
+          if (state.modEditMode) {
+            // Toggle red per-step modulation
+            if (lane.steps[stepIdx] === 0) {
+              lane.steps[stepIdx] = 1;
+              lane.modFlags[stepIdx] = 1;
+              lane.modVals[stepIdx] = 0.35 + Math.random() * 0.60;
+            } else {
+              lane.modFlags[stepIdx] = lane.modFlags[stepIdx] ? 0 : 1;
+              lane.modVals[stepIdx] = lane.modFlags[stepIdx] ? (0.35 + Math.random() * 0.60) : 0;
             }
-            renderMatrixGrid();
-          });
-        }
+          } else if (state.holdEditMode) {
+            // Toggle held gate (=)
+            lane.steps[stepIdx] = (lane.steps[stepIdx] === 2) ? 0 : 2;
+            if (lane.steps[stepIdx] === 0) lane.modFlags[stepIdx] = 0;
+          } else {
+            // Toggle single trigger (|)
+            lane.steps[stepIdx] = (lane.steps[stepIdx] > 0) ? 0 : 1;
+            if (lane.steps[stepIdx] === 0) lane.modFlags[stepIdx] = 0;
+          }
+          updateMatrixGridDOM();
+        });
         stepsRow.appendChild(cell);
+        cells.push(cell);
       }
 
       const lenEl = document.createElement('div');
       lenEl.className = 'm-len';
-      lenEl.textContent = `/${lane.len}`;
       lenEl.title = 'Drag Horizontally to Set Uneven Step Length (1 - 64)';
 
       let dragLen = false, startX = 0, startLen = lane.len;
@@ -1830,7 +1928,7 @@
         if (nextLen !== lane.len) {
           lane.len = nextLen;
           syncMatrixHeaderUI();
-          renderMatrixGrid();
+          updateMatrixGridDOM();
         }
       });
       const endLen = (e) => {
@@ -1845,167 +1943,302 @@
       row.appendChild(stepsRow);
       row.appendChild(lenEl);
       matrixLanesEl.appendChild(row);
+      matrixDom.push({ cells, lenEl });
+    });
+  }
+
+  // Fast in-place DOM update (never replaces nodes)
+  function updateMatrixGridDOM() {
+    const pageOffset = state.pageIdx * 16;
+
+    state.lanes.forEach((lane, lIdx) => {
+      const domLane = matrixDom[lIdx];
+      if (!domLane) return;
+
+      domLane.lenEl.textContent = `/${lane.len}`;
+      const activeStep = state.seqRunning ? (state.seqTick % lane.len) : -1;
+
+      for (let col = 0; col < 16; col++) {
+        const cell = domLane.cells[col];
+        const stepIdx = pageOffset + col;
+        const inRange = stepIdx < lane.len;
+        const stepVal = inRange ? lane.steps[stepIdx] : 0;
+        const isMod = inRange && stepVal > 0 && lane.modFlags[stepIdx] === 1;
+        const isHead = inRange && (stepIdx === activeStep);
+
+        cell.className = 'm-cell' +
+          (col % 4 === 0 ? ' beat-mark' : '') +
+          (stepVal > 0 ? ' on' : '') +
+          (isMod ? ' modded' : '') +
+          (isHead ? ' head' : '');
+
+        if (!inRange) {
+          cell.textContent = ' ';
+          cell.style.cursor = 'default';
+        } else {
+          cell.style.cursor = 'pointer';
+          if (stepVal === 2) {
+            cell.textContent = isHead ? '[=]' : '=';
+          } else if (stepVal === 1) {
+            cell.textContent = isHead ? '[|]' : '|';
+          } else {
+            cell.textContent = '·';
+          }
+        }
+      }
     });
   }
 
   function advanceSequencerStep() {
-    if (!state.seqHold) {
-      state.seqTick++;
-    }
+    state.seqTick++;
 
-    // GROW parameter stochastically mutates step patterns and mod depths over time
     const grow = state.miniParams.grow;
-    if (grow > 0.02 && !state.seqHold) {
+    if (grow > 0.02) {
       state.lanes.forEach((lane) => {
         if (Math.random() < grow * 0.24) {
           const idx = Math.floor(Math.random() * lane.len);
           const next = lane.steps[idx] ? 0 : 1;
           lane.steps[idx] = next;
-          if (next === 1) lane.modVals[idx] = 0.20 + Math.random() * 0.75;
+          if (next > 0 && Math.random() < 0.45) {
+            lane.modFlags[idx] = 1;
+            lane.modVals[idx] = 0.25 + Math.random() * 0.70;
+          } else if (next === 0) {
+            lane.modFlags[idx] = 0;
+          }
         }
       });
     }
 
-    // Apply per-step randomized modulation when MOD is active on that lane
-    const susScale = 0.30 + state.miniParams.sus * 1.15;
+    const susScale = 0.35 + state.miniParams.sus * 1.15;
     state.lanes.forEach((lane) => {
       const pos = state.seqTick % lane.len;
-      const gate = lane.steps[pos] === 1;
+      const stepType = lane.steps[pos];
       const baseVal = state.params[lane.id] || 0;
 
-      if (lane.mod && gate) {
-        const stepDepth = (lane.modVals[pos] || 0.5) * susScale;
-        sendParam(lane.id, clamp(baseVal + stepDepth, 0, 1));
+      if (stepType > 0) {
+        const isMod = lane.modFlags[pos] === 1;
+        const modAmt = isMod ? (lane.modVals[pos] * susScale) : (stepType === 2 ? 0.45 * susScale : 0.28 * susScale);
+        sendParam(lane.id, clamp(baseVal + modAmt, 0, 1));
       } else {
         sendParam(lane.id, baseVal);
       }
     });
 
-    renderMatrixGrid();
+    updateMatrixGridDOM();
   }
 
   /* ===========================================================================
-     06. ALWAYS-ALIVE WEATHERING & AMBER OIL-ART STRIP
+     06. REAL-TIME GEOMETRIC AMBER WEATHERING & WIND EROSION STRIP
      =========================================================================== */
   const tankCanvas = document.getElementById('tank-canvas');
   const tankCtx = tankCanvas.getContext('2d', { alpha: false });
   const bgVizCanvas = document.getElementById('bg-viz-canvas');
   const bgVizCtx = bgVizCanvas.getContext('2d', { alpha: false });
 
-  const TANK_COLS = 116;
-  const TANK_ROWS = 11;
-  let tankGrid = new Uint8Array(TANK_COLS * TANK_ROWS);
-  let tankColor = new Uint8Array(TANK_COLS * TANK_ROWS);
+  const TANK_COLS = 112;
+  const TANK_ROWS = 12;
 
-  const TANK_GLYPHS = [' ', '█', '▓', '▒', '≈'];
-  const TANK_COLORS = ['#a67a3c', '#4e8f60', '#487e9e', '#9e4b4b', '#e6e3da'];
+  // cellType: 0=empty, 1=solid geometric amber structure, 2=loose falling/blowing dust
+  const tankType   = new Uint8Array(TANK_COLS * TANK_ROWS);
+  const tankHealth = new Uint8Array(TANK_COLS * TANK_ROWS); // 3=intact, 2=weathered, 1=fractured
+  const tankOwner  = new Uint8Array(TANK_COLS * TANK_ROWS); // 1=Amber I, 2=Amber II, 0=ambient
+  const tankColor  = new Uint8Array(TANK_COLS * TANK_ROWS); // 0=amber, 1=green, 2=cyan, 3=red, 4=vellum
+  const tankGlyph  = new Array(TANK_COLS * TANK_ROWS).fill(' ');
 
-  function spawnAmberCluster(matId, colorId) {
-    const cx = Math.floor(10 + Math.random() * (TANK_COLS - 20));
-    const cy = Math.floor(1 + Math.random() * 3);
-    const rx = 4 + Math.floor(Math.random() * 5);
-    const ry = 1 + Math.floor(Math.random() * 2);
+  const TANK_PAL = ['#a67a3c', '#4e8f60', '#487e9e', '#c45858', '#e6e3da'];
+  const WIND_STREAKS = [];
+  for (let i = 0; i < 18; i++) {
+    WIND_STREAKS.push({
+      x: Math.random() * TANK_COLS,
+      y: Math.floor(Math.random() * (TANK_ROWS - 1)),
+      speed: 0.4 + Math.random() * 0.9
+    });
+  }
 
-    for (let r = Math.max(0, cy - ry); r <= Math.min(TANK_ROWS - 3, cy + ry); r++) {
-      for (let c = Math.max(1, cx - rx); c <= Math.min(TANK_COLS - 2, cx + rx); c++) {
-        if (Math.random() < 0.85) {
+  // Crystallize a clean, distinct geometric structure once when Amber I or II is engaged
+  function buildAmberStructure(ownerId) {
+    // Clear any leftover solid fragments of this owner before re-casting
+    for (let i = 0; i < tankType.length; i++) {
+      if (tankOwner[i] === ownerId && tankType[i] === 1) {
+        tankType[i] = 2; // Convert old solid into loose dust
+      }
+    }
+
+    if (ownerId === 1) {
+      // AMBER I: Clean Stepped Lithic Monolith / Portal on Left-Center
+      const cx = 32;
+      for (let r = 2; r < TANK_ROWS - 1; r++) {
+        const halfW = (r < 4) ? 6 : (r < 7 ? 9 : 12);
+        const isDoor = (r >= 6 && r < TANK_ROWS - 1);
+        for (let c = cx - halfW; c <= cx + halfW; c++) {
+          const dx = Math.abs(c - cx);
+          if (isDoor && dx <= 3) continue; // Hollow sanctum doorway
           const idx = r * TANK_COLS + c;
-          tankGrid[idx] = matId;
-          tankColor[idx] = colorId;
+          tankType[idx] = 1;
+          tankHealth[idx] = 3;
+          tankOwner[idx] = 1;
+          tankColor[idx] = (dx === halfW || r === 2) ? 4 : 0;
+
+          if (r === 2 && c === cx - halfW) tankGlyph[idx] = '┌';
+          else if (r === 2 && c === cx + halfW) tankGlyph[idx] = '┐';
+          else if (r === 2) tankGlyph[idx] = '─';
+          else if (dx === halfW) tankGlyph[idx] = '│';
+          else if (isDoor && dx === 4) tankGlyph[idx] = '│';
+          else if (r === 5 && dx <= 4) tankGlyph[idx] = '─';
+          else if (r === 4 && dx === 0) tankGlyph[idx] = '◈';
+          else tankGlyph[idx] = ((c + r) % 2 === 0) ? '▓' : '┼';
+        }
+      }
+    } else {
+      // AMBER II: Clean Geometric Vaulted Arch / Reliquary Spire on Right-Center
+      const cx = 79;
+      for (let r = 1; r < TANK_ROWS - 1; r++) {
+        const halfW = (r === 1) ? 3 : (r < 4 ? 7 : (r < 7 ? 11 : 14));
+        const inArch = (r >= 5 && Math.abs(r - 7) <= 3);
+        for (let c = cx - halfW; c <= cx + halfW; c++) {
+          const dx = Math.abs(c - cx);
+          if (inArch && dx >= 3 && dx <= 6 && r >= 6) continue; // Twin colonnade arches
+          const idx = r * TANK_COLS + c;
+          tankType[idx] = 1;
+          tankHealth[idx] = 3;
+          tankOwner[idx] = 2;
+          tankColor[idx] = (dx === halfW || r === 1) ? 4 : ((dx <= 2) ? 2 : 0);
+
+          if (r === 1 && dx === 0) tankGlyph[idx] = '◈';
+          else if (r === 1) tankGlyph[idx] = '─';
+          else if (dx === halfW) tankGlyph[idx] = '│';
+          else if (r === 4) tankGlyph[idx] = '═';
+          else if (dx === 0) tankGlyph[idx] = '╬';
+          else tankGlyph[idx] = ((c + r) % 3 === 0) ? '▓' : '∶';
         }
       }
     }
   }
 
-  function seedInitialWeatheringStrata() {
-    for (let k = 0; k < 7; k++) {
-      const cx = Math.floor(((k + 0.5) / 7) * TANK_COLS);
-      const colId = k % 4;
-      for (let r = TANK_ROWS - 4; r < TANK_ROWS; r++) {
-        for (let c = Math.max(1, cx - 5); c <= Math.min(TANK_COLS - 2, cx + 5); c++) {
-          if (Math.random() < 0.65) {
-            const idx = r * TANK_COLS + c;
-            tankGrid[idx] = (r === TANK_ROWS - 4) ? 1 : 3;
-            tankColor[idx] = colId;
-          }
-        }
+  function shatterAmberStructure(ownerId) {
+    for (let i = 0; i < tankType.length; i++) {
+      if (tankOwner[i] === ownerId && tankType[i] === 1) {
+        tankType[i] = 2; // Release into falling/blowing dust
+        tankHealth[i] = 1;
+        tankGlyph[i] = '▒';
       }
     }
   }
 
-  function stepWeatheringTank(audioRms, timeSec) {
-    const patina = state.params.rhizome;
-    const thicket = state.params.thicket;
-    const tide = state.params.tide;
-    const sway = state.params.sway;
-    const entropy = state.params.entropy;
+  let tankPhysicsAccum = 0;
+  function stepWeatheringTank(audioRms, dtSec, timeSec) {
+    const patina   = state.params.rhizome;
+    const thicket  = state.params.thicket;
+    const tide     = state.params.tide;
+    const sway     = state.params.sway;
+    const entropy  = state.params.entropy;
     const undertow = state.params.undertow;
 
-    const weatherRate = clamp(0.04 + patina * 0.45 + thicket * 0.35 + entropy * 0.55 + audioRms * 0.4, 0.04, 0.95);
-    const turbulence = clamp(0.12 + tide * 0.65 + sway * 0.55 + undertow * 0.60 + audioRms * 0.5, 0.12, 1.5);
+    // Wind direction flips left when UNDERTOW reverse exceeds 0.5
+    const windDir = (undertow > 0.5) ? -1 : 1;
+    const windForce = clamp(0.18 + tide * 0.65 + sway * 0.55 + entropy * 0.45 + audioRms * 0.75, 0.18, 1.6);
+    const erosionRate = clamp(0.015 + patina * 0.12 + thicket * 0.08 + entropy * 0.18 + audioRms * 0.15, 0.015, 0.45);
 
-    if (state.amber1 && Math.random() < 0.10) spawnAmberCluster(1, 0);
-    if (state.amber2 && Math.random() < 0.08) spawnAmberCluster(2, 2);
+    // Update subtle atmospheric wind streaks at 60fps
+    for (let i = 0; i < WIND_STREAKS.length; i++) {
+      const ws = WIND_STREAKS[i];
+      ws.x += windDir * ws.speed * (0.4 + windForce * 1.4) * dtSec * 22;
+      if (ws.x >= TANK_COLS) { ws.x = 0; ws.y = Math.floor(Math.random() * (TANK_ROWS - 1)); }
+      if (ws.x < 0) { ws.x = TANK_COLS - 1; ws.y = Math.floor(Math.random() * (TANK_ROWS - 1)); }
+    }
 
-    if (Math.random() < 0.22) {
-      const rc = 1 + Math.floor(Math.random() * (TANK_COLS - 2));
-      if (tankGrid[rc] === 0) {
-        tankGrid[rc] = 3;
-        tankColor[rc] = Math.floor(Math.random() * 4);
+    // Run cellular weathering & dust physics at a deliberate ~18Hz cadence
+    tankPhysicsAccum += dtSec;
+    if (tankPhysicsAccum < 0.055) return;
+    tankPhysicsAccum = 0;
+
+    // 1. Real-time weathering of exposed solid geometric structures
+    for (let r = 0; r < TANK_ROWS - 1; r++) {
+      for (let c = 1; c < TANK_COLS - 1; c++) {
+        const idx = r * TANK_COLS + c;
+        if (tankType[idx] !== 1) continue;
+
+        // Check if exposed to windward side, top, or open air underneath
+        const windwardIdx = r * TANK_COLS + (c - windDir);
+        const topIdx = r > 0 ? (r - 1) * TANK_COLS + c : -1;
+        const botIdx = (r + 1) * TANK_COLS + c;
+        const exposed = (tankType[windwardIdx] === 0) ||
+                        (topIdx >= 0 && tankType[topIdx] === 0) ||
+                        (tankType[botIdx] === 0);
+
+        if (exposed && Math.random() < erosionRate) {
+          tankHealth[idx]--;
+          if (tankHealth[idx] === 2) {
+            tankGlyph[idx] = '▒';
+            if (patina > 0.25 && Math.random() < 0.45) tankColor[idx] = 1; // Verdigris patina seepage
+          } else if (tankHealth[idx] === 1) {
+            tankGlyph[idx] = '∶';
+            if (entropy > 0.25 && Math.random() < 0.40) tankColor[idx] = 3; // Rust/cinnabar fracture
+          } else {
+            // Detach into falling/blowing dust grain!
+            tankType[idx] = 2;
+            tankGlyph[idx] = '·';
+          }
+        }
       }
     }
 
-    for (let r = TANK_ROWS - 2; r >= 0; r--) {
-      const scanDir = (r % 2 === 0) ? 1 : -1;
+    // 2. Gravity for falling dust + wind drift blowing settled floor dust away
+    for (let r = TANK_ROWS - 1; r >= 0; r--) {
+      const scanLeftToRight = (windDir < 0);
       for (let step = 0; step < TANK_COLS; step++) {
-        const c = scanDir === 1 ? step : (TANK_COLS - 1 - step);
+        const c = scanLeftToRight ? step : (TANK_COLS - 1 - step);
         const idx = r * TANK_COLS + c;
-        const mat = tankGrid[idx];
-        if (mat === 0) continue;
+        if (tankType[idx] !== 2) continue;
 
-        if (mat === 1 || mat === 2) {
+        const onFloor = (r === TANK_ROWS - 1);
+        if (!onFloor) {
           const belowIdx = (r + 1) * TANK_COLS + c;
-          if (tankGrid[belowIdx] === 0 && Math.random() < weatherRate * 0.14) {
-            tankGrid[idx] = 3;
-            if (Math.random() < 0.35) tankColor[idx] = (Math.random() < 0.5) ? 1 : 3;
+          const driftC = c + (Math.random() < windForce * 0.55 ? windDir : 0);
+          if (driftC < 0 || driftC >= TANK_COLS) {
+            tankType[idx] = 0; // Blown off screen
+            continue;
           }
-          continue;
-        }
-
-        const belowIdx = (r + 1) * TANK_COLS + c;
-        if (tankGrid[belowIdx] === 0) {
-          tankGrid[belowIdx] = turbulence > 0.55 ? 4 : mat;
-          tankColor[belowIdx] = tankColor[idx];
-          tankGrid[idx] = 0;
+          const targetIdx = (r + 1) * TANK_COLS + driftC;
+          if (tankType[targetIdx] === 0) {
+            tankType[targetIdx] = 2;
+            tankColor[targetIdx] = tankColor[idx];
+            tankGlyph[targetIdx] = Math.random() < 0.3 ? '∶' : '·';
+            tankType[idx] = 0;
+          } else if (tankType[belowIdx] === 0) {
+            tankType[belowIdx] = 2;
+            tankColor[belowIdx] = tankColor[idx];
+            tankGlyph[belowIdx] = '·';
+            tankType[idx] = 0;
+          } else {
+            // Slide laterally off piles
+            const sideC = c + windDir;
+            if (sideC >= 0 && sideC < TANK_COLS && tankType[r * TANK_COLS + sideC] === 0) {
+              tankType[r * TANK_COLS + sideC] = 2;
+              tankColor[r * TANK_COLS + sideC] = tankColor[idx];
+              tankGlyph[r * TANK_COLS + sideC] = '·';
+              tankType[idx] = 0;
+            }
+          }
         } else {
-          const sloshBias = Math.sin(timeSec * (1.8 + turbulence * 3.0) + r * 0.5) * turbulence;
-          const dir = (sloshBias + (Math.random() - 0.5)) >= 0 ? 1 : -1;
-          const nc = c + dir;
-          if (nc >= 1 && nc < TANK_COLS - 1) {
-            const diagIdx = (r + 1) * TANK_COLS + nc;
-            const sideIdx = r * TANK_COLS + nc;
-            if (tankGrid[diagIdx] === 0) {
-              tankGrid[diagIdx] = mat;
-              tankColor[diagIdx] = tankColor[idx];
-              tankGrid[idx] = 0;
-            } else if (turbulence > 0.25 && tankGrid[sideIdx] === 0 && Math.random() < turbulence * 0.65) {
-              tankGrid[sideIdx] = 4;
-              tankColor[sideIdx] = Math.random() < 0.25 ? ((tankColor[idx] + 1) % 4) : tankColor[idx];
-              tankGrid[idx] = 0;
+          // Floor dust blows horizontally in the wind and disperses off the edges
+          if (Math.random() < windForce * 0.48) {
+            const nc = c + windDir;
+            const lift = (Math.random() < windForce * 0.14 && r > 1) ? -1 : 0;
+            if (nc < 0 || nc >= TANK_COLS) {
+              tankType[idx] = 0; // Swept away off the edge
+            } else {
+              const targetIdx = (r + lift) * TANK_COLS + nc;
+              if (tankType[targetIdx] === 0) {
+                tankType[targetIdx] = 2;
+                tankColor[targetIdx] = tankColor[idx];
+                tankGlyph[targetIdx] = lift < 0 ? '·' : '≈';
+                tankType[idx] = 0;
+              }
             }
           }
         }
       }
-    }
-
-    let bottomFill = 0;
-    const lastRowOff = (TANK_ROWS - 1) * TANK_COLS;
-    for (let c = 1; c < TANK_COLS - 1; c++) {
-      if (tankGrid[lastRowOff + c] !== 0) bottomFill++;
-    }
-    if (bottomFill > TANK_COLS * 0.72) {
-      const clearC = 1 + Math.floor(Math.random() * (TANK_COLS - 2));
-      tankGrid[lastRowOff + clearC] = 0;
     }
   }
 
@@ -2015,7 +2248,7 @@
 
     const cellW = widthPx / TANK_COLS;
     const cellH = heightPx / TANK_ROWS;
-    const fontPx = Math.max(8, Math.floor(Math.min(cellW, cellH) * 0.94));
+    const fontPx = Math.max(8, Math.floor(Math.min(cellW, cellH) * 0.96));
 
     targetCtx.font = `bold ${fontPx}px 'Courier New', Menlo, monospace`;
     targetCtx.textAlign = 'center';
@@ -2023,28 +2256,43 @@
 
     if (isBackdrop) targetCtx.globalAlpha = 0.42;
 
+    // Quiet geological floor horizon line
+    targetCtx.fillStyle = '#18221d';
+    const floorY = (TANK_ROWS - 1) * cellH + cellH * 0.52;
+    for (let c = 0; c < TANK_COLS; c += 2) {
+      if (tankType[(TANK_ROWS - 1) * TANK_COLS + c] === 0) {
+        targetCtx.fillText('·', c * cellW + cellW * 0.5, floorY);
+      }
+    }
+
+    // Subtle atmospheric wind streaks blowing through the chamber
+    targetCtx.fillStyle = '#2c3d34';
+    const streakChar = (state.params.tide > 0.35 || state.params.sway > 0.35) ? '─' : '·';
+    for (let i = 0; i < WIND_STREAKS.length; i++) {
+      const ws = WIND_STREAKS[i];
+      const sc = Math.floor(ws.x);
+      if (sc >= 0 && sc < TANK_COLS && tankType[ws.y * TANK_COLS + sc] === 0) {
+        targetCtx.fillText(streakChar, sc * cellW + cellW * 0.5, ws.y * cellH + cellH * 0.52);
+      }
+    }
+
+    // Downward sequencer playhead arrow on top rail
     if (state.seqRunning) {
       const selLane = state.lanes[state.selectedLaneIdx];
       const stepInPage = (state.seqTick % selLane.len) % 16;
       const headCol = Math.floor(((stepInPage + 0.5) / 16) * TANK_COLS);
-      targetCtx.fillStyle = '#9e4b4b';
+      targetCtx.fillStyle = '#c45858';
       targetCtx.fillText('↓', headCol * cellW + cellW * 0.5, cellH * 0.52);
     }
 
+    // Draw clean geometric amber structures and falling/drifting dust
     for (let r = 0; r < TANK_ROWS; r++) {
       const py = r * cellH + cellH * 0.52;
       for (let c = 0; c < TANK_COLS; c++) {
         const idx = r * TANK_COLS + c;
-        const mat = tankGrid[idx];
-        if (mat === 0) continue;
-
-        const ch = TANK_GLYPHS[mat] || '·';
-        const colHex = (mat === 1 || mat === 2) && Math.random() < 0.04
-          ? TANK_COLORS[4]
-          : TANK_COLORS[tankColor[idx] % 4];
-
-        targetCtx.fillStyle = colHex;
-        targetCtx.fillText(ch, c * cellW + cellW * 0.5, py);
+        if (tankType[idx] === 0) continue;
+        targetCtx.fillStyle = TANK_PAL[tankColor[idx] % 5];
+        targetCtx.fillText(tankGlyph[idx], c * cellW + cellW * 0.5, py);
       }
     }
 
@@ -2095,7 +2343,7 @@
         rms = peak;
         seismoHistory.shift();
         seismoHistory.push(peak);
-        scopeCtx.fillStyle = '#9e4b4b';
+        scopeCtx.fillStyle = '#c45858';
         for (let x = 1; x < w - 1; x += 2) {
           const bh = Math.floor(seismoHistory[x] * (h - 2));
           for (let py = h - 2; py >= h - 2 - bh; py -= 2) scopeCtx.fillRect(x, py, 1, 1);
@@ -2129,9 +2377,9 @@
     lastMs = nowMs;
 
     if (state.seqRunning) {
-      const paceMult = 0.25 + state.miniParams.pace * 2.75; // 0.25x to 3.0x clock multiplier
+      const bpm = paceToBpm(state.miniParams.pace);
       const swingBias = (state.seqTick % 2 === 1) ? (1.0 + state.miniParams.drag * 0.35) : (1.0 - state.miniParams.drag * 0.25);
-      const stepDur = ((60.0 / state.bpm) * 0.25 / paceMult) * swingBias;
+      const stepDur = ((60.0 / bpm) * 0.25) * swingBias;
       state.seqAccumSec += dtSec;
       while (state.seqAccumSec >= stepDur) {
         state.seqAccumSec -= stepDur;
@@ -2140,7 +2388,7 @@
     }
 
     const rms = renderScopeAndAmberBars(dtSec);
-    stepWeatheringTank(rms, nowMs * 0.001);
+    stepWeatheringTank(rms, dtSec, nowMs * 0.001);
 
     if (state.expandViz) {
       renderTankToContext(bgVizCtx, bgVizCanvas.width, bgVizCanvas.height, true);
@@ -2162,7 +2410,7 @@
     const rect = tankCanvas.getBoundingClientRect();
     if (rect.width > 0) {
       tankCanvas.width = Math.floor(rect.width * dpr);
-      tankCanvas.height = Math.floor(88 * dpr);
+      tankCanvas.height = Math.floor(92 * dpr);
     }
   }
 
@@ -2245,16 +2493,18 @@
     state.amber1 = !state.amber1;
     document.getElementById('btn-amber1').classList.toggle('active', state.amber1);
     sendParam('amber', state.amber1 ? 100 : 0);
-    if (state.amber1) spawnAmberCluster(1, 0);
-    showToast(`AMBER I (2S): ${state.amber1 ? 'FROZEN' : 'THAWED'}`);
+    if (state.amber1) buildAmberStructure(1);
+    else shatterAmberStructure(1);
+    showToast(`AMBER I (2S): ${state.amber1 ? 'FROZEN' : 'SHATTERED'}`);
   }
 
   function toggleAmber2() {
     state.amber2 = !state.amber2;
     document.getElementById('btn-amber2').classList.toggle('active', state.amber2);
     sendParam('amber2', state.amber2 ? 100 : 0);
-    if (state.amber2) spawnAmberCluster(2, 2);
-    showToast(`AMBER II (4S): ${state.amber2 ? 'FROZEN' : 'THAWED'}`);
+    if (state.amber2) buildAmberStructure(2);
+    else shatterAmberStructure(2);
+    showToast(`AMBER II (4S): ${state.amber2 ? 'FROZEN' : 'SHATTERED'}`);
   }
 
   function toggleInputMonitor() {
@@ -2270,12 +2520,12 @@
     const btn = document.getElementById('btn-seq-toggle');
     btn.textContent = state.seqRunning ? 'SEQ: ON' : 'SEQ: OFF';
     btn.classList.toggle('active-green', state.seqRunning);
-    updateBpmUI();
+    updateBpmAndPaceUI();
     if (!state.seqRunning) {
       restoreModulatedBaseParams();
-      renderMatrixGrid();
+      updateMatrixGridDOM();
     }
-    showToast(`SEQUENCER: ${state.seqRunning ? `RUNNING (${state.bpm} BPM)` : 'STOPPED'}`);
+    showToast(`SEQUENCER: ${state.seqRunning ? `RUNNING (${paceToBpm(state.miniParams.pace)} BPM)` : 'STOPPED'}`);
   }
 
   function wireUI() {
@@ -2324,7 +2574,7 @@
         el.dataset.val = v.toFixed(3);
         const ang = -135 + v * 270;
         ind.setAttribute('transform', `rotate(${ang.toFixed(1)}, 13, 13)`);
-        if (mId === 'pace') syncTempoToWorklet();
+        if (mId === 'pace') updateBpmAndPaceUI();
       };
       updateMini(parseFloat(el.dataset.val));
 
@@ -2341,7 +2591,8 @@
       const endM = (e) => {
         if (!dragM) return;
         dragM = false;
-        showToast(`${mId.toUpperCase()}: ${state.miniParams[mId].toFixed(2)}`);
+        const valMsg = mId === 'pace' ? `${paceToBpm(state.miniParams.pace)} BPM` : state.miniParams[mId].toFixed(2);
+        showToast(`${mId.toUpperCase()}: ${valMsg}`);
         try { el.releasePointerCapture(e.pointerId); } catch (_) {}
       };
       el.addEventListener('pointerup', endM);
@@ -2353,33 +2604,24 @@
       document.getElementById(`m-lane-${i}`).addEventListener('click', () => {
         state.selectedLaneIdx = i;
         syncMatrixHeaderUI();
-        renderMatrixGrid();
+        updateMatrixGridDOM();
       });
     }
 
     document.getElementById('btn-seq-toggle').addEventListener('click', toggleSequencer);
 
     document.getElementById('btn-seq-mod').addEventListener('click', () => {
-      const lane = state.lanes[state.selectedLaneIdx];
-      lane.mod = !lane.mod;
-      if (!lane.mod) {
-        sendParam(lane.id, state.params[lane.id] || 0);
-      }
+      state.modEditMode = !state.modEditMode;
+      if (state.modEditMode) state.holdEditMode = false;
       syncMatrixHeaderUI();
-      renderMatrixGrid();
-      showToast(`${lane.id.toUpperCase()} MOD: ${lane.mod ? 'ON' : 'OFF'}`);
+      showToast(state.modEditMode ? 'EDIT MODE // RED MODULATION' : 'EDIT MODE // SINGLE STEP');
     });
 
     document.getElementById('btn-seq-hold').addEventListener('click', () => {
-      state.seqHold = !state.seqHold;
+      state.holdEditMode = !state.holdEditMode;
+      if (state.holdEditMode) state.modEditMode = false;
       syncMatrixHeaderUI();
-      showToast(`SEQUENCER HOLD: ${state.seqHold ? 'ON' : 'OFF'}`);
-    });
-
-    document.getElementById('btn-seq-dice').addEventListener('click', () => {
-      state.lanes.forEach(lane => randomizeLaneSteps(lane, 0.36));
-      renderMatrixGrid();
-      showToast('ALL LANES // STEPS & PER-STEP MOD ROLLED');
+      showToast(state.holdEditMode ? 'EDIT MODE // HELD GATES (=)' : 'EDIT MODE // SINGLE STEP');
     });
 
     const lenBtn = document.getElementById('btn-seq-len');
@@ -2398,7 +2640,7 @@
       if (next !== lane.len) {
         lane.len = next;
         syncMatrixHeaderUI();
-        renderMatrixGrid();
+        updateMatrixGridDOM();
       }
     });
     const endHdrLen = (e) => {
@@ -2414,31 +2656,33 @@
       const maxPages = Math.max(1, Math.ceil(lane.len / 16));
       state.pageIdx = (state.pageIdx + 1) % maxPages;
       syncMatrixHeaderUI();
-      renderMatrixGrid();
+      updateMatrixGridDOM();
     });
 
     document.getElementById('btn-seq-clr').addEventListener('click', () => {
       const lane = state.lanes[state.selectedLaneIdx];
       lane.steps.fill(0);
+      lane.modFlags.fill(0);
       lane.modVals.fill(0);
       sendParam(lane.id, state.params[lane.id] || 0);
-      renderMatrixGrid();
+      updateMatrixGridDOM();
       showToast(`${lane.id.toUpperCase()} CLEARED`);
     });
 
-    // BPM vertical drag on OLED readout
-    let draggingBpm = false, bpmStartY = 0, bpmStartVal = state.bpm;
+    // BPM vertical drag directly drives PACE
+    let draggingBpm = false, bpmStartY = 0, bpmStartVal = 120;
     bpmEl.addEventListener('pointerdown', (e) => {
       e.preventDefault();
       draggingBpm = true;
       bpmStartY = e.clientY;
-      bpmStartVal = state.bpm;
+      bpmStartVal = paceToBpm(state.miniParams.pace);
       try { bpmEl.setPointerCapture(e.pointerId); } catch (_) {}
     });
     bpmEl.addEventListener('pointermove', (e) => {
       if (!draggingBpm) return;
-      state.bpm = clamp(Math.round(bpmStartVal + (bpmStartY - e.clientY) * 0.4), 40, 220);
-      updateBpmUI();
+      const nextBpm = clamp(Math.round(bpmStartVal + (bpmStartY - e.clientY) * 0.4), 30, 210);
+      state.miniParams.pace = bpmToPace(nextBpm);
+      updateBpmAndPaceUI();
     });
     const endBpmDrag = (e) => {
       if (!draggingBpm) return;
@@ -2618,11 +2862,11 @@
   }
 
   window.onload = () => {
-    seedInitialWeatheringStrata();
+    buildMatrixGridDOM();
     refreshPresetCycler();
     syncMatrixHeaderUI();
-    renderMatrixGrid();
-    updateBpmUI();
+    updateMatrixGridDOM();
+    updateBpmAndPaceUI();
     wireUI();
     resizeCanvases();
     loadAudioDevices();
