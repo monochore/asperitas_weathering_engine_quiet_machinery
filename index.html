@@ -844,7 +844,7 @@
 
               <div class="knob-container">
                 <div class="knob-label">UNDERTOW</div>
-                <svg class="knob-svg" id="undertow" data-val="0" data-default="0" viewBox="0 0 44 44" title="1.0x Unity-Pitch Reverse Buffer Crossfade">
+                <svg class="knob-svg" id="undertow" data-val="0" data-default="0" viewBox="0 0 44 44" title="Reverse Cloud Crossfade (1.0x Upper / 0.5x Sub)">
                   <g class="knob-ticks">
                     <line x1="22" y1="1.5" x2="22" y2="4.5" transform="rotate(-135,22,22)"/>
                     <line x1="22" y1="1.5" x2="22" y2="4.5" transform="rotate(-90,22,22)"/>
@@ -863,11 +863,11 @@
             </div>
 
             <div class="amber-container">
-              <button type="button" class="amber-btn" id="btn-amber1" title="Freeze 2.0s Buffer [1]">
+              <button type="button" class="amber-btn" id="btn-amber1" title="Freeze 2.0s Diffused Upper Cloud [1]">
                 <span>AMBER I</span>
                 <span class="amb-bar" id="amb1-bar">[░░░░░░]</span>
               </button>
-              <button type="button" class="amber-btn" id="btn-amber2" title="Freeze 4.0s Buffer [2]">
+              <button type="button" class="amber-btn" id="btn-amber2" title="Freeze 4.0s Half-Speed Sub-Octave Cloud [2]">
                 <span>AMBER II</span>
                 <span class="amb-bar" id="amb2-bar">[░░░░░░]</span>
               </button>
@@ -1127,9 +1127,9 @@
           <span class="matrix-title">WEATHERING MATRIX</span>
 
           <div class="matrix-controls">
-            <button type="button" class="m-btn active-green" id="m-lane-0" data-lane="0" title="Lane I: Amber I (2s) Output VCA Gate &amp; Swell">I. AMB I</button>
-            <button type="button" class="m-btn" id="m-lane-1" data-lane="1" title="Lane II: Amber II (4s) Output VCA Gate &amp; Swell">II. AMB II</button>
-            <button type="button" class="m-btn" id="m-lane-2" data-lane="2" title="Lane III: Undertow Forward / 1.0x Reverse Bloom">III. UNDR</button>
+            <button type="button" class="m-btn active-green" id="m-lane-0" data-lane="0" title="Lane I: Amber I Upper Cloud + Spawned Rhythmic Blooms">I. AMB I</button>
+            <button type="button" class="m-btn" id="m-lane-1" data-lane="1" title="Lane II: Amber II Half-Speed Sub Cloud + Spawned Sub-Pulses">II. AMB II</button>
+            <button type="button" class="m-btn" id="m-lane-2" data-lane="2" title="Lane III: Undertow Reverse Cloud Bloom">III. UNDR</button>
             <button type="button" class="m-btn" id="m-lane-3" data-lane="3" title="Lane IV: Thicket &amp; Tide Harmonic Pocket Carve">IV. FLTR</button>
           </div>
 
@@ -1151,7 +1151,7 @@
                 <line class="mk-ind" x1="13" y1="13" x2="13" y2="5" stroke="#e6e3da" stroke-width="1.6"/>
               </svg>
             </div>
-            <div class="mini-knob-item" id="mk-sus" data-val="0.50" style="color:var(--c-cyan);" title="Tempo-Proportional Envelope Slew: Chop to Liquid Swell (SUS)">
+            <div class="mini-knob-item" id="mk-sus" data-val="0.50" style="color:var(--c-cyan);" title="Tempo-Proportional Envelope Contour: Chop to Liquid Swell (SUS)">
               <span>SUS</span>
               <svg class="mini-knob-svg" viewBox="0 0 26 26">
                 <circle cx="13" cy="13" r="10" fill="#090c0a" stroke="#487e9e" stroke-width="1.6"/>
@@ -1194,7 +1194,7 @@
   'use strict';
 
   /* ===========================================================================
-     01. AUDIO WORKLET DSP ENGINE (ORIGINAL ASPERITAS DSP + SAFE DRIFT + VCA SEQ)
+     01. AUDIO WORKLET DSP ENGINE (LOCKED GOLD CORE + CLOUD & SPAWNED AMBERS)
      =========================================================================== */
   const workletString = `
   class SafeDelay {
@@ -1221,6 +1221,26 @@
     }
   }
 
+  class SafeAllpass {
+    constructor(size, gain = 0.64) {
+      this.size = size;
+      this.gain = gain;
+      this.buf = new Float32Array(size);
+      this.idx = 0;
+    }
+    process(input) {
+      if (Number.isNaN(input)) input = 0;
+      const delayed = this.buf[this.idx];
+      let v = input + delayed * this.gain;
+      if (Number.isNaN(v)) v = 0;
+      v = Math.max(-2.5, Math.min(2.5, v));
+      const out = delayed - v * this.gain;
+      this.buf[this.idx] = v;
+      this.idx = (this.idx + 1) % this.size;
+      return Number.isNaN(out) ? 0 : out;
+    }
+  }
+
   class AsperitasProcessor extends AudioWorkletProcessor {
     constructor() {
       super();
@@ -1229,15 +1249,74 @@
         rhizome: 0, tide: 0, sway: 0, amber: 0, amber2: 0,
         transmute: 0, distill: 0, ouroboros: 0, entropy: 0, undertow: 0,
         input_mon: 1.0, tempo_mult: 1.0,
-        seq_slew_sec: 0.06,
-        seq_amb1_gate: 1.0, seq_amb1_mod: 0.0,
-        seq_amb2_gate: 1.0, seq_amb2_mod: 0.0,
+        step_dur_sec: 0.25, seq_sus: 0.50,
+        seq_amb1_active: 0.0, seq_amb1_mod: 0.0,
+        seq_amb2_active: 0.0, seq_amb2_mod: 0.0,
         seq_undertow_add: 0.0,
         seq_filter_mod: 0.0
       };
+
+      // Per-step rhythmic AR envelope state for spawned Amber I & II layers
+      this.env1 = 0.0;
+      this.env2 = 0.0;
+      this.gate1Count = 0;
+      this.gate2Count = 0;
+      this.env1Peak = 0.0;
+      this.env2Peak = 0.0;
+
       this.port.onmessage = (e) => {
-        if (e.data.id && this.p[e.data.id] !== undefined) {
-          this.p[e.data.id] = e.data.value;
+        const d = e.data;
+        if (!d) return;
+        if (d.type === 'step') {
+          const stepSamples = Math.max(1000, this.p.step_dur_sec * sampleRate);
+          const sus = Math.max(0, Math.min(1, this.p.seq_sus));
+          const singleGate = Math.floor(stepSamples * (0.16 + sus * 0.72));
+          const holdGate   = Math.floor(stepSamples * 1.18);
+
+          if (d.lane === 0) {
+            this.p.seq_amb1_active = d.active ? 1.0 : 0.0;
+            this.p.seq_amb1_mod = d.modVal || 0.0;
+            if (d.stepType === 1) {
+              // Crisp re-articulation on consecutive single (|) steps
+              this.env1 *= 0.22;
+              this.gate1Count = singleGate;
+              this.env1Peak = 0.88 + (d.modVal || 0) * 0.35;
+            } else if (d.stepType === 2) {
+              // Seamless tie on held (=) steps
+              this.gate1Count = holdGate;
+              this.env1Peak = 1.0 + (d.modVal || 0) * 0.30;
+            } else {
+              this.gate1Count = 0;
+            }
+          } else if (d.lane === 1) {
+            this.p.seq_amb2_active = d.active ? 1.0 : 0.0;
+            this.p.seq_amb2_mod = d.modVal || 0.0;
+            if (d.stepType === 1) {
+              this.env2 *= 0.22;
+              this.gate2Count = singleGate;
+              this.env2Peak = 0.90 + (d.modVal || 0) * 0.38;
+            } else if (d.stepType === 2) {
+              this.gate2Count = holdGate;
+              this.env2Peak = 1.0 + (d.modVal || 0) * 0.32;
+            } else {
+              this.gate2Count = 0;
+            }
+          }
+          return;
+        }
+        if (d.type === 'reset_seq') {
+          this.p.seq_amb1_active = 0.0;
+          this.p.seq_amb2_active = 0.0;
+          this.p.seq_amb1_mod = 0.0;
+          this.p.seq_amb2_mod = 0.0;
+          this.p.seq_undertow_add = 0.0;
+          this.p.seq_filter_mod = 0.0;
+          this.gate1Count = 0;
+          this.gate2Count = 0;
+          return;
+        }
+        if (d.id && this.p[d.id] !== undefined) {
+          this.p[d.id] = d.value;
         }
       };
 
@@ -1245,6 +1324,8 @@
       this.lpf_y = 0; this.tide_lpf = 0;
       this.rhz_lpf1 = 0; this.rhz_lpf2 = 0; this.rhz_lpf3 = 0; this.rhz_lpf4 = 0;
       this.amb_lpf1 = 0; this.amb_lpf2 = 0;
+      this.amb1_spawn_hp = 0;
+      this.amb2_sub_lpf = 0;
       this.global_tank = 0; this.ouro_hp_y = 0; this.ouro_lp_y = 0;
       this.dc_x = 0; this.dc_y = 0;
 
@@ -1257,7 +1338,15 @@
       this.amber_freeze = new SafeDelay(88200);
       this.amber2_freeze = new SafeDelay(176400);
 
-      // Restored original 22050-sample liquid slew on delay-time parameters
+      // Dedicated 3-stage prime all-pass cloud diffusers for AMBER I & AMBER II
+      this.ap1a = new SafeAllpass(557, 0.64);
+      this.ap1b = new SafeAllpass(1181, 0.62);
+      this.ap1c = new SafeAllpass(1973, 0.60);
+
+      this.ap2a = new SafeAllpass(769, 0.68);
+      this.ap2b = new SafeAllpass(1543, 0.66);
+      this.ap2c = new SafeAllpass(2711, 0.64);
+
       this.sm_transmute = 0;
       this.sm_sway = 0;
       this.sm_entropy = 0;
@@ -1265,9 +1354,8 @@
       this.sm_amber = 0;
       this.sm_amber2 = 0;
 
-      // Smooth output-VCA & musical sequencer modulation followers
-      this.sm_seq_amb1 = 1.0;
-      this.sm_seq_amb2 = 1.0;
+      this.sm_seq_amb1_act = 0.0;
+      this.sm_seq_amb2_act = 0.0;
       this.sm_seq_amb1_mod = 0.0;
       this.sm_seq_amb2_mod = 0.0;
       this.sm_seq_undertow = 0.0;
@@ -1275,11 +1363,13 @@
 
       this.ghost_phase = 0;
       this.ph1 = 0;
-      this.ph2 = 0;
+      this.ph2_fwd = 0;
+      this.ph2_rev = 0;
       this.ph_c1 = 0; this.ph_c2 = 0; this.ph_c3 = 0; this.ph_c4 = 0;
       this.ph_tide = 0;
       this.swell_env = 0;
       this.wet_rms_prev = 0;
+      this.mod_tank_inject = 0;
       this.TWOPI = Math.PI * 2;
     }
 
@@ -1308,8 +1398,17 @@
       if (!outL || !outR) return true;
       const sr = sampleRate;
 
-      const slewUp = Math.max(220.0, this.p.seq_slew_sec * sr * 0.35);
-      const slewDn = Math.max(260.0, this.p.seq_slew_sec * sr * 0.55);
+      const stepSec = Math.max(0.06, this.p.step_dur_sec);
+      const sus = Math.max(0, Math.min(1, this.p.seq_sus));
+
+      // Tempo-proportional AR envelope coefficients: 4ms crisp chop -> overlapping liquid swells
+      const attSec = 0.004 + Math.pow(sus, 2.0) * stepSec * 0.45;
+      const relSec = 0.018 + Math.pow(sus, 1.5) * stepSec * 1.45;
+      const attCoeff = 1.0 - Math.exp(-1.0 / Math.max(44, attSec * sr));
+      const relCoeff = 1.0 - Math.exp(-1.0 / Math.max(180, relSec * sr));
+
+      const modSlewUp = Math.max(220.0, attSec * sr * 1.2);
+      const modSlewDn = Math.max(320.0, relSec * sr * 0.8);
 
       for (let i = 0; i < outL.length; i++) {
         let raw_in = input ? input[i] : 0;
@@ -1317,6 +1416,15 @@
 
         this.sm_mon = this.slide(this.p.input_mon, 441.0, 441.0, this.sm_mon);
         const in1 = raw_in * this.sm_mon;
+
+        // Step-articulated envelopes for spawned Amber I & II layers
+        const tgt1 = this.gate1Count > 0 ? this.env1Peak : 0.0;
+        if (this.gate1Count > 0) this.gate1Count--;
+        this.env1 += (tgt1 - this.env1) * (tgt1 > this.env1 ? attCoeff : relCoeff);
+
+        const tgt2 = this.gate2Count > 0 ? this.env2Peak : 0.0;
+        if (this.gate2Count > 0) this.gate2Count--;
+        this.env2 += (tgt2 - this.env2) * (tgt2 > this.env2 ? attCoeff : relCoeff);
 
         const sublimate = this.p.sublimate * 100.0;
         const alembic   = this.p.alembic * 100.0;
@@ -1332,28 +1440,27 @@
         const undertow  = this.p.undertow * 100.0;
         const tempoMult = Math.max(0.15, Math.min(3.0, this.p.tempo_mult));
 
-        // Original 22050-sample smooth slew prevents any pitch-zipping on knob/scatter changes
         this.sm_transmute = this.slide(transmute / 100.0, 22050.0, 22050.0, this.sm_transmute);
         this.sm_sway      = this.slide(sway / 100.0, 22050.0, 22050.0, this.sm_sway);
         this.sm_entropy   = this.slide(entropy / 100.0, 22050.0, 22050.0, this.sm_entropy);
         this.sm_amber     = this.slide(this.p.amber / 100.0, 1102.0, 1102.0, this.sm_amber);
         this.sm_amber2    = this.slide(this.p.amber2 / 100.0, 1102.0, 1102.0, this.sm_amber2);
 
-        // Sequencer output-VCA and continuous modulation followers
-        this.sm_seq_amb1     = this.slide(this.p.seq_amb1_gate, slewUp, slewDn, this.sm_seq_amb1);
-        this.sm_seq_amb2     = this.slide(this.p.seq_amb2_gate, slewUp, slewDn, this.sm_seq_amb2);
-        this.sm_seq_amb1_mod = this.slide(this.p.seq_amb1_mod, slewUp, slewDn, this.sm_seq_amb1_mod);
-        this.sm_seq_amb2_mod = this.slide(this.p.seq_amb2_mod, slewUp, slewDn, this.sm_seq_amb2_mod);
-        this.sm_seq_undertow = this.slide(this.p.seq_undertow_add, slewUp, slewDn, this.sm_seq_undertow);
-        this.sm_seq_filter   = this.slide(this.p.seq_filter_mod, slewUp, slewDn, this.sm_seq_filter);
+        this.sm_seq_amb1_act = this.slide(this.p.seq_amb1_active, 2205.0, 2205.0, this.sm_seq_amb1_act);
+        this.sm_seq_amb2_act = this.slide(this.p.seq_amb2_active, 2205.0, 2205.0, this.sm_seq_amb2_act);
+        this.sm_seq_amb1_mod = this.slide(this.p.seq_amb1_mod, modSlewUp, modSlewDn, this.sm_seq_amb1_mod);
+        this.sm_seq_amb2_mod = this.slide(this.p.seq_amb2_mod, modSlewUp, modSlewDn, this.sm_seq_amb2_mod);
+        this.sm_seq_undertow = this.slide(this.p.seq_undertow_add, modSlewUp, modSlewDn, this.sm_seq_undertow);
+        this.sm_seq_filter   = this.slide(this.p.seq_filter_mod, modSlewUp, modSlewDn, this.sm_seq_filter);
 
-        // Pitch-safe geological ENTROPY drift (zero violent Doppler scratching)
         const ent2 = this.sm_entropy * this.sm_entropy;
         this.ghost_phase = (this.ghost_phase + ((0.08 + this.sm_entropy * 0.55) * tempoMult) / sr) % 1.0;
         const bipolar_ghost = Math.sin(this.ghost_phase * this.TWOPI);
         const uni_ghost = (bipolar_ghost * 0.5 + 0.5) * ent2;
         const ghost_mod = bipolar_ghost * ent2 * 0.5;
         const tape_warble = bipolar_ghost * ent2 * 180.0;
+
+        const mod_energy = Math.min(1.0, (this.sm_seq_amb1_mod * this.env1 + this.sm_seq_amb2_mod * this.env2) * 0.5);
 
         const n_alembic   = Math.pow(alembic / 100.0, 2.0);
         const n_thicket   = Math.pow(thicket / 100.0, 2.0);
@@ -1375,10 +1482,8 @@
         const ouro_clean = this.global_tank - this.ouro_hp_y;
         const ouro_lp_alpha = Math.max(0.001, Math.min(1.0, (3000.0 / sr) * this.TWOPI));
         this.ouro_lp_y = this.ouro_lp_y * (1.0 - ouro_lp_alpha) + ouro_clean * ouro_lp_alpha;
-        const weather_in = swelled_in + Math.tanh(this.ouro_lp_y * n_ouro * 0.40);
+        const weather_in = swelled_in + Math.tanh(this.ouro_lp_y * n_ouro * 0.40) + this.mod_tank_inject;
 
-        // Cascade taps: smooth TRANSMUTE positions + gentle +/-180 sample tape warble
-        // ENTROPY crossfades tap weights organically instead of ripping delay pointers
         const t1_samp = this.scale(this.sm_transmute, 0.0, 1.0, 8820.0, 30870.0) + tape_warble;
         const t2_samp = this.scale(this.sm_transmute, 0.0, 1.0, 17640.0, 52920.0) - (tape_warble * 0.65);
         const t3_samp = this.scale(this.sm_transmute, 0.0, 1.0, 26460.0, 80000.0) + (tape_warble * 0.40);
@@ -1396,8 +1501,8 @@
 
         const fb_base = this.scale(n_alembic, 0.0, 1.0, 0.0, 0.975);
         const fb_total = fb_base + (n_rhizome * 0.04);
-        const drive = 1.0 + (n_rhizome * 9.0);
-        const mod_depth = (this.sm_sway * 960.0) + (uni_ghost * 320.0);
+        const drive = 1.0 + ((n_rhizome + mod_energy * 0.25) * 9.0);
+        const mod_depth = (this.sm_sway * 960.0) + (uni_ghost * 320.0) + (mod_energy * 180.0);
 
         this.ph_c1 = (this.ph_c1 + 0.10 / sr) % 1.0;
         this.ph_c2 = (this.ph_c2 + 0.13 / sr) % 1.0;
@@ -1433,24 +1538,32 @@
         this.dc_y = dc_out;
         this.global_tank = Number.isNaN(dc_out) ? 0 : dc_out;
 
-        // Lane IV (FLTR) smoothly opens/ducks THICKET low-pass filter to carve pockets
         const eff_thicket = Math.max(0.0, Math.min(1.0, n_thicket + (ghost_mod * 0.45) + (this.sm_seq_filter * 0.72)));
         const cutoff_hz = this.scale(eff_thicket, 0.0, 1.0, 18000.0, 380.0);
         const alpha = Math.max(0.001, Math.min(1.0, (cutoff_hz / sr) * this.TWOPI));
         const filtered_wet = this.lpf_y * (1.0 - alpha) + this.global_tank * alpha;
         this.lpf_y = Number.isNaN(filtered_wet) ? 0 : filtered_wet;
 
-        // AMBER I & II FREEZE BUFFERS + TRUE 1.0x UNITY-PITCH REVERSE READ HEAD
-        // Freeze buffers remain 100% intact in memory; Lanes I & II gate their playback VCAs downstream
-        const amb_deg_alpha1 = Math.max(0.001, Math.min(1.0, (this.scale(Math.min(1.0, n_rhizome + this.sm_seq_amb1_mod * 0.65), 0.0, 1.0, 18000.0, 900.0) / sr) * this.TWOPI));
-        const amb_deg_alpha2 = Math.max(0.001, Math.min(1.0, (this.scale(Math.min(1.0, n_rhizome + this.sm_seq_amb2_mod * 0.65), 0.0, 1.0, 18000.0, 900.0) / sr) * this.TWOPI));
+        // =====================================================================
+        // AMBER I (2S SUSPENDED UPPER CLOUD) & AMBER II (4S HALF-SPEED SUB BED)
+        // Continuous diffused cloud voices + articulated spawned groove layers
+        // =====================================================================
+        const amb_deg_alpha1 = Math.max(0.001, Math.min(1.0, (this.scale(Math.min(1.0, n_rhizome + this.sm_seq_amb1_mod * 0.50), 0.0, 1.0, 18000.0, 950.0) / sr) * this.TWOPI));
+        const amb_deg_alpha2 = Math.max(0.001, Math.min(1.0, (this.scale(Math.min(1.0, n_rhizome + this.sm_seq_amb2_mod * 0.60), 0.0, 1.0, 18000.0, 850.0) / sr) * this.TWOPI));
 
+        const fwd_amt = Math.cos(n_undertow * Math.PI * 0.5);
+        const rev_amt = Math.sin(n_undertow * Math.PI * 0.5);
+
+        // --- AMBER I: 2.0s Recirculation + Seamless Diffused Unity Cloud ---
         const freeze_sig = this.amber_freeze.read(88196);
         this.amb_lpf1 = this.amb_lpf1 * (1.0 - amb_deg_alpha1) + freeze_sig * amb_deg_alpha1;
         const freeze_in = filtered_wet * (1.0 - this.sm_amber) + this.amb_lpf1 * this.sm_amber;
         this.amber_freeze.write(freeze_in);
 
-        this.ph1 = (this.ph1 + (2.0 / 88200.0)) % 1.0;
+        const amb1_stagger = this.amber_freeze.read(44098);
+        const amb1_fwd_raw = (this.amb_lpf1 * 0.65) + (amb1_stagger * 0.55);
+
+        this.ph1 = (this.ph1 + (2.0 / 88190.0)) % 1.0;
         const rev_ph1 = this.ph1;
         const rev_ph2 = this.wrap(rev_ph1 + 0.5, 0.0, 1.0);
         const rev_w1 = 0.5 * (1.0 - Math.cos(rev_ph1 * this.TWOPI));
@@ -1458,24 +1571,59 @@
         const rev1_sig = (this.amber_freeze.read(rev_ph1 * 88190.0) * rev_w1) +
                          (this.amber_freeze.read(rev_ph2 * 88190.0) * rev_w2);
 
+        const amb1_core = (amb1_fwd_raw * fwd_amt) + (rev1_sig * rev_amt);
+        const amb1_cloud = this.ap1c.process(this.ap1b.process(this.ap1a.process(amb1_core)));
+
+        // Sculpted high-mid sheen on spawned Lane I pulses so rhythm cuts cleanly over the cloud halo
+        const hp1_alpha = Math.max(0.001, Math.min(1.0, (520.0 / sr) * this.TWOPI));
+        this.amb1_spawn_hp = this.amb1_spawn_hp * (1.0 - hp1_alpha) + amb1_core * hp1_alpha;
+        const amb1_crisp = (amb1_core * 0.55) + ((amb1_core - this.amb1_spawn_hp) * (0.75 + this.sm_seq_amb1_mod * 0.85));
+
+        const amb1_bed = amb1_cloud * (1.0 - this.sm_seq_amb1_act * 0.42);
+        const amb1_pulse_drive = 1.15 + this.sm_seq_amb1_mod * 2.4;
+        const amb1_spawned = Math.tanh(amb1_crisp * amb1_pulse_drive) * this.env1 * this.sm_seq_amb1_act * 0.92;
+        const amb1_final = amb1_bed + amb1_spawned;
+
+        // --- AMBER II: 4.0s Recirculation + 0.5x Half-Speed Octave-Down Dark Cloud ---
         const freeze2_sig = this.amber2_freeze.read(176396);
         this.amb_lpf2 = this.amb_lpf2 * (1.0 - amb_deg_alpha2) + freeze2_sig * amb_deg_alpha2;
         const freeze2_in = filtered_wet * (1.0 - this.sm_amber2) + this.amb_lpf2 * this.sm_amber2;
         this.amber2_freeze.write(freeze2_in);
 
-        this.ph2 = (this.ph2 + (2.0 / 176400.0)) % 1.0;
-        const rev_ph3 = this.ph2;
-        const rev_ph4 = this.wrap(rev_ph3 + 0.5, 0.0, 1.0);
-        const rev_w3 = 0.5 * (1.0 - Math.cos(rev_ph3 * this.TWOPI));
-        const rev_w4 = 0.5 * (1.0 - Math.cos(rev_ph4 * this.TWOPI));
-        const rev2_sig = (this.amber2_freeze.read(rev_ph3 * 176390.0) * rev_w3) +
-                         (this.amber2_freeze.read(rev_ph4 * 176390.0) * rev_w4);
+        // +0.5x forward (octave down) & -0.5x reverse (octave down reverse)
+        this.ph2_fwd = (this.ph2_fwd + (0.5 / 176380.0)) % 1.0;
+        const fp1 = this.ph2_fwd;
+        const fp2 = this.wrap(fp1 + 0.5, 0.0, 1.0);
+        const fw1 = 0.5 * (1.0 - Math.cos(fp1 * this.TWOPI));
+        const fw2 = 0.5 * (1.0 - Math.cos(fp2 * this.TWOPI));
+        const sub2_fwd = (this.amber2_freeze.read(fp1 * 176380.0) * fw1) +
+                         (this.amber2_freeze.read(fp2 * 176380.0) * fw2);
 
-        const fwd_amt = Math.cos(n_undertow * Math.PI * 0.5);
-        const rev_amt = Math.sin(n_undertow * Math.PI * 0.5);
+        this.ph2_rev = (this.ph2_rev + (1.5 / 176380.0)) % 1.0;
+        const rp1 = this.ph2_rev;
+        const rp2 = this.wrap(rp1 + 0.5, 0.0, 1.0);
+        const rw1 = 0.5 * (1.0 - Math.cos(rp1 * this.TWOPI));
+        const rw2 = 0.5 * (1.0 - Math.cos(rp2 * this.TWOPI));
+        const sub2_rev = (this.amber2_freeze.read(rp1 * 176380.0) * rw1) +
+                         (this.amber2_freeze.read(rp2 * 176380.0) * rw2);
 
-        const amb1_final = ((this.amb_lpf1 * fwd_amt) + (rev1_sig * rev_amt)) * this.sm_seq_amb1;
-        const amb2_final = ((this.amb_lpf2 * fwd_amt) + (rev2_sig * rev_amt)) * this.sm_seq_amb2;
+        const amb2_raw = (sub2_fwd * fwd_amt) + (sub2_rev * rev_amt);
+        const sub_cut = this.scale(Math.min(1.0, Math.max(0.0, n_rhizome * 0.65 - this.sm_seq_amb2_mod * 0.35)), 0.0, 1.0, 2600.0, 520.0);
+        const sub_alpha = Math.max(0.001, Math.min(1.0, (sub_cut / sr) * this.TWOPI));
+        this.amb2_sub_lpf = this.amb2_sub_lpf * (1.0 - sub_alpha) + amb2_raw * sub_alpha;
+
+        const amb2_cloud = this.ap2c.process(this.ap2b.process(this.ap2a.process(this.amb2_sub_lpf)));
+
+        const amb2_bed = amb2_cloud * (1.0 - this.sm_seq_amb2_act * 0.42);
+        const amb2_pulse_drive = 1.25 + this.sm_seq_amb2_mod * 2.8;
+        const amb2_spawned = Math.tanh(this.amb2_sub_lpf * amb2_pulse_drive) * this.env2 * this.sm_seq_amb2_act * 0.96;
+        const amb2_final = amb2_bed + amb2_spawned;
+
+        // Red MOD steps re-excite the comb tank for living internal engine resonance
+        this.mod_tank_inject = Math.tanh(
+          (amb1_spawned * this.sm_seq_amb1_mod * this.sm_amber +
+           amb2_spawned * this.sm_seq_amb2_mod * this.sm_amber2) * 0.24
+        );
 
         const parallel_wet = Math.tanh(filtered_wet + (amb1_final * this.sm_amber) + (amb2_final * this.sm_amber2));
 
@@ -1521,7 +1669,6 @@
     return v < lo ? lo : (v > hi ? hi : v);
   }
 
-  // Logarithmic PACE curve: 20 BPM (glacial ambient) -> 60 BPM (mid) -> 180 BPM (fast rhythmic)
   function paceToBpm(paceVal) {
     return Math.round(20 * Math.pow(9, clamp(paceVal, 0, 1)));
   }
@@ -1556,13 +1703,12 @@
     seqAccumSec: 0,
 
     miniParams: {
-      pace: 0.50, // 60 BPM default
-      sus:  0.50, // Tempo-proportional envelope slew
+      pace: 0.50,
+      sus:  0.50,
       grow: 0.00,
       drag: 0.00
     },
 
-    // Blank slate on boot: 16 steps on all 4 lanes, zero active steps, zero modulation
     lanes: [
       { id: 'amb1', label: 'AMBER I',  roman: 'I.',   color: '#4e8f60', len: 16, steps: new Uint8Array(64), modFlags: new Uint8Array(64), modVals: new Float32Array(64) },
       { id: 'amb2', label: 'AMBER II', roman: 'II.',  color: '#a67a3c', len: 16, steps: new Uint8Array(64), modFlags: new Uint8Array(64), modVals: new Float32Array(64) },
@@ -1653,26 +1799,30 @@
     }
   }
 
+  function sendStepEvent(laneIdx, active, stepType, modVal) {
+    if (asperitasNode) {
+      asperitasNode.port.postMessage({
+        type: 'step',
+        lane: laneIdx,
+        active,
+        stepType,
+        modVal
+      });
+    }
+  }
+
   function syncTempoAndSlewToWorklet() {
     const bpm = paceToBpm(state.miniParams.pace);
     const stepDurSec = (60.0 / bpm) * 0.25;
-    // Tempo-proportional SUS slew: 6ms percussive chop -> 0.35x rounded pulse -> 1.5x overlapping swell
-    const sus = state.miniParams.sus;
-    const slewSec = (sus <= 0.02)
-      ? 0.006
-      : (0.006 + Math.pow(sus, 1.5) * stepDurSec * 1.5);
-
     sendParam('tempo_mult', bpm / 60.0);
-    sendParam('seq_slew_sec', slewSec);
+    sendParam('step_dur_sec', stepDurSec);
+    sendParam('seq_sus', state.miniParams.sus);
   }
 
   function resetSequencerWorkletOverrides() {
-    sendParam('seq_amb1_gate', 1.0);
-    sendParam('seq_amb1_mod', 0.0);
-    sendParam('seq_amb2_gate', 1.0);
-    sendParam('seq_amb2_mod', 0.0);
-    sendParam('seq_undertow_add', 0.0);
-    sendParam('seq_filter_mod', 0.0);
+    if (asperitasNode) {
+      asperitasNode.port.postMessage({ type: 'reset_seq' });
+    }
   }
 
   function setKnobValue(knobEl, val, updateBase = true) {
@@ -2033,7 +2183,6 @@
   function advanceSequencerStep() {
     state.seqTick++;
 
-    // GROW evolves only lanes that already contain at least one step (respects blank lanes)
     const grow = state.miniParams.grow;
     if (grow > 0.02) {
       state.lanes.forEach((lane) => {
@@ -2052,31 +2201,27 @@
       });
     }
 
-    // Lane I: AMBER I Output VCA Gate / Swell + Patina accent on red MOD steps
+    // Lane I: AMBER I Cloud Bed + Articulated Spawned Rhythmic Blooms
     const l0 = state.lanes[0];
     if (!laneHasSteps(l0)) {
-      sendParam('seq_amb1_gate', 1.0);
-      sendParam('seq_amb1_mod', 0.0);
+      sendStepEvent(0, false, 0, 0);
     } else {
       const p0 = state.seqTick % l0.len;
       const st0 = l0.steps[p0];
-      sendParam('seq_amb1_gate', st0 > 0 ? 1.0 : 0.0);
-      sendParam('seq_amb1_mod', (st0 > 0 && l0.modFlags[p0]) ? l0.modVals[p0] : 0.0);
+      sendStepEvent(0, true, st0, (st0 > 0 && l0.modFlags[p0]) ? l0.modVals[p0] : 0);
     }
 
-    // Lane II: AMBER II Output VCA Gate / Swell + Patina accent on red MOD steps
+    // Lane II: AMBER II Half-Speed Sub Cloud Bed + Articulated Spawned Sub-Pulses
     const l1 = state.lanes[1];
     if (!laneHasSteps(l1)) {
-      sendParam('seq_amb2_gate', 1.0);
-      sendParam('seq_amb2_mod', 0.0);
+      sendStepEvent(1, false, 0, 0);
     } else {
       const p1 = state.seqTick % l1.len;
       const st1 = l1.steps[p1];
-      sendParam('seq_amb2_gate', st1 > 0 ? 1.0 : 0.0);
-      sendParam('seq_amb2_mod', (st1 > 0 && l1.modFlags[p1]) ? l1.modVals[p1] : 0.0);
+      sendStepEvent(1, true, st1, (st1 > 0 && l1.modFlags[p1]) ? l1.modVals[p1] : 0);
     }
 
-    // Lane III: UNDERTOW Equal-Power Forward / 1.0x Reverse Bloom
+    // Lane III: UNDERTOW Equal-Power Forward / Reverse Cloud Bloom
     const l2 = state.lanes[2];
     if (!laneHasSteps(l2)) {
       sendParam('seq_undertow_add', 0.0);
@@ -2427,7 +2572,7 @@
       bar1El.textContent = '[░░░░░░]';
     }
     if (state.amber2) {
-      state.amber2Phase = (state.amber2Phase + dtSec / 4.0) % 1.0;
+      state.amber2Phase = (state.amber2Phase + dtSec / 8.0) % 1.0;
       const n = Math.floor(state.amber2Phase * 6) + 1;
       bar2El.textContent = `[${'▓'.repeat(n)}${'░'.repeat(6 - n)}]`;
     } else {
@@ -2561,7 +2706,7 @@
     sendParam('amber', state.amber1 ? 100 : 0);
     if (state.amber1) buildAmberStructure(1);
     else shatterAmberStructure(1);
-    showToast(`AMBER I (2S): ${state.amber1 ? 'FROZEN' : 'SHATTERED'}`);
+    showToast(`AMBER I // UPPER CLOUD: ${state.amber1 ? 'FROZEN' : 'SHATTERED'}`);
   }
 
   function toggleAmber2() {
@@ -2570,7 +2715,7 @@
     sendParam('amber2', state.amber2 ? 100 : 0);
     if (state.amber2) buildAmberStructure(2);
     else shatterAmberStructure(2);
-    showToast(`AMBER II (4S): ${state.amber2 ? 'FROZEN' : 'SHATTERED'}`);
+    showToast(`AMBER II // SUB CLOUD (0.5X): ${state.amber2 ? 'FROZEN' : 'SHATTERED'}`);
   }
 
   function toggleInputMonitor() {
@@ -2731,12 +2876,12 @@
       lane.steps.fill(0);
       lane.modFlags.fill(0);
       lane.modVals.fill(0);
-      if (state.selectedLaneIdx === 0) { sendParam('seq_amb1_gate', 1.0); sendParam('seq_amb1_mod', 0.0); }
-      else if (state.selectedLaneIdx === 1) { sendParam('seq_amb2_gate', 1.0); sendParam('seq_amb2_mod', 0.0); }
-      else if (state.selectedLaneIdx === 2) { sendParam('seq_undertow_add', 0.0); }
-      else if (state.selectedLaneIdx === 3) { sendParam('seq_filter_mod', 0.0); }
+      if (state.selectedLaneIdx === 0) sendStepEvent(0, false, 0, 0);
+      else if (state.selectedLaneIdx === 1) sendStepEvent(1, false, 0, 0);
+      else if (state.selectedLaneIdx === 2) sendParam('seq_undertow_add', 0.0);
+      else if (state.selectedLaneIdx === 3) sendParam('seq_filter_mod', 0.0);
       updateMatrixGridDOM();
-      showToast(`${lane.label} CLEARED (PASS-THROUGH)`);
+      showToast(`${lane.label} CLEARED (PURE CLOUD)`);
     });
 
     // BPM vertical drag directly drives logarithmic PACE
