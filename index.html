@@ -34,8 +34,7 @@
   }
 
   html, body, #bg-viz-canvas, #tank-canvas, #chassis, .column, .oled-container,
-  .knob-container, #sequencer-deck, button, .seq-step, .seq-len-drag,
-  .ascii-scrub, .cycle-box {
+  .knob-container, #matrix-deck, button, .m-cell, .m-len, .ascii-scrub, .cycle-box {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -76,7 +75,7 @@
 
   #qm-toast {
     position: fixed;
-    top: 10px;
+    top: 8px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 50;
@@ -85,11 +84,11 @@
     border: 1px solid var(--border-main);
     outline: 1px solid var(--border-inner);
     outline-offset: -4px;
-    padding: 4px 14px;
+    padding: 4px 12px;
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: bold;
-    letter-spacing: 1.4px;
+    letter-spacing: 1.3px;
     text-transform: uppercase;
     color: var(--vellum);
     opacity: 0;
@@ -135,13 +134,13 @@
   }
 
   /* =========================================================================
-     03. ETCHED MINERAL HARDWARE CHASSIS
+     03. ETCHED MINERAL HARDWARE CHASSIS (COMPACT 940PX MNEMOSYNE PROPORTIONS)
      ========================================================================= */
   #chassis-wrap {
     position: relative;
     z-index: 20;
     width: 100%;
-    max-width: 1180px;
+    max-width: 940px;
     padding: 8px;
     display: flex;
     justify-content: center;
@@ -154,7 +153,7 @@
     border: 1px solid var(--border-main);
     outline: 1px solid var(--border-inner);
     outline-offset: -5px;
-    padding: 9px 8px 8px 8px;
+    padding: 9px 7px 8px 7px;
     box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.94), 0 16px 48px rgba(0, 0, 0, 0.92);
     display: flex;
     flex-direction: column;
@@ -175,7 +174,7 @@
 
   .upper-deck {
     display: grid;
-    grid-template-columns: 24px 1fr 24px;
+    grid-template-columns: 22px 1fr 22px;
     align-items: stretch;
     width: 100%;
   }
@@ -184,9 +183,9 @@
     writing-mode: vertical-rl;
     transform: rotate(180deg);
     text-align: center;
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: bold;
-    letter-spacing: 3.2px;
+    letter-spacing: 3px;
     color: var(--text-dim);
     display: flex;
     align-items: center;
@@ -197,7 +196,7 @@
 
   .panel-core {
     display: grid;
-    grid-template-columns: 224px 1fr 1.18fr 1fr;
+    grid-template-columns: 208px 1fr 1.15fr 1fr;
     border-left: 1px solid var(--col-div);
     border-right: 1px solid var(--col-div);
     min-width: 0;
@@ -207,7 +206,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 3px 9px 5px 9px;
+    padding: 3px 8px 5px 8px;
     border-right: 1px solid var(--col-div);
     min-width: 0;
   }
@@ -216,13 +215,13 @@
   }
 
   .col-header {
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: bold;
-    letter-spacing: 1.6px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
     color: var(--text-dim);
     text-align: center;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     padding-bottom: 3px;
     border-bottom: 1px solid var(--border-inner);
     line-height: 1.1;
@@ -237,7 +236,7 @@
     width: 100%;
     background: var(--well);
     border: 1px solid var(--border-inner);
-    padding: 5px;
+    padding: 4px;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -246,14 +245,14 @@
   .scope-header-bar {
     display: flex;
     align-items: stretch;
-    gap: 4px;
+    gap: 3px;
     width: 100%;
   }
 
   #scope {
     flex: 1;
     min-width: 0;
-    height: 36px;
+    height: 32px;
     background: #030403;
     border: 1px solid var(--border-inner);
     cursor: pointer;
@@ -262,12 +261,12 @@
   }
 
   #bpm-readout {
-    flex: 0 0 68px;
+    flex: 0 0 60px;
     background: #060807;
     border: 1px solid var(--border-inner);
     color: var(--text-dim);
     font-family: var(--mono);
-    font-size: 8.5px;
+    font-size: 8px;
     font-weight: bold;
     display: flex;
     align-items: center;
@@ -275,8 +274,8 @@
     text-align: center;
     cursor: ns-resize;
     touch-action: none;
-    letter-spacing: 0.3px;
     padding: 0 2px;
+    white-space: nowrap;
   }
   #bpm-readout.active {
     color: var(--vellum);
@@ -286,7 +285,7 @@
   .oled-row {
     display: flex;
     width: 100%;
-    gap: 4px;
+    gap: 3px;
     align-items: center;
   }
 
@@ -296,10 +295,10 @@
     border: 1px solid #35453c;
     color: var(--text-main);
     font-family: var(--mono);
-    font-size: 8.5px;
+    font-size: 8px;
     font-weight: bold;
-    letter-spacing: 0.5px;
-    padding: 3.5px 2px;
+    letter-spacing: 0.4px;
+    padding: 3px 2px;
     cursor: pointer;
     text-transform: uppercase;
     transition: 0.1s;
@@ -327,28 +326,34 @@
     color: #050605;
     border-color: var(--c-green);
   }
+  .oled-btn.active-cyan {
+    background: var(--c-cyan);
+    color: #050605;
+    border-color: var(--c-cyan);
+  }
   .oled-btn.active-red {
     background: var(--c-red);
     color: #050605;
     border-color: var(--c-red);
   }
 
-  /* Custom Hardware Cycle-Box (Zero Native <select>) */
+  /* Custom Hardware Cycle-Box */
   .cycle-box {
     display: grid;
-    grid-template-columns: 16px 1fr 16px;
+    grid-template-columns: 15px 1fr 15px;
     align-items: stretch;
     width: 100%;
     background: var(--well);
     border: 1px solid #35453c;
-    height: 20px;
+    height: 19px;
+    min-width: 0;
   }
   .cycle-step {
     background: #080a09;
     border: none;
     color: var(--text-dim);
     font-family: var(--mono);
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: bold;
     cursor: pointer;
     padding: 0;
@@ -367,22 +372,21 @@
     align-items: center;
     justify-content: center;
     padding: 0 4px;
-    font-size: 8px;
+    font-size: 7.5px;
     font-weight: bold;
     color: var(--text-main);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: pointer;
-    letter-spacing: 0.3px;
   }
   .cycle-label:hover { color: var(--vellum); }
 
-  /* Degraded ASCII Amber Capture Buffers (Zero Neon WebKit Glow) */
+  /* Degraded ASCII Amber Capture Buffers (Zero Text Overflow) */
   .amber-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 5px;
+    gap: 4px;
     width: 100%;
     margin-top: 4px;
   }
@@ -391,17 +395,17 @@
     border: 1px solid #473926;
     color: var(--text-dim);
     font-family: var(--mono);
-    font-size: 8px;
+    font-size: 7.5px;
     font-weight: bold;
-    padding: 4px 3px;
+    padding: 3px 2px;
     cursor: pointer;
     text-transform: uppercase;
-    letter-spacing: 0.4px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2px;
-    transition: background 0.1s, border-color 0.1s;
+    min-width: 0;
+    overflow: hidden;
   }
   .amber-btn:hover {
     background: #14110c;
@@ -409,9 +413,10 @@
     color: var(--vellum);
   }
   .amber-btn .amb-bar {
-    font-size: 8px;
-    letter-spacing: 0.5px;
+    font-size: 7.5px;
+    letter-spacing: 0px;
     color: #54442e;
+    white-space: nowrap;
   }
   .amber-btn.active {
     background: #1c150c;
@@ -449,8 +454,8 @@
     white-space: nowrap;
   }
   .knob-svg {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     cursor: ns-resize;
     overflow: visible;
     filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.75));
@@ -491,30 +496,23 @@
   .col-mac .knob-bezel { stroke: var(--c-red); }   .col-mac .knob-label { color: var(--c-red); }
 
   /* =========================================================================
-     06. UTILITY STRIP: A/B MORPH, PRESETS, GROW & VIEW SWITCHES
+     06. UTILITY STRIP (A/B MORPH, PRESETS & VIEW)
      ========================================================================= */
   .utility-strip {
     border-top: 1px solid var(--col-div);
     margin-top: 6px;
-    padding: 5px 6px;
+    padding: 4px 6px;
     background: rgba(4, 5, 4, 0.85);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
   }
 
   .util-group {
     display: flex;
     align-items: center;
-    gap: 4px;
-  }
-
-  .util-tag {
-    font-size: 8.5px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    color: var(--text-dim);
+    gap: 3px;
   }
 
   .ascii-scrub {
@@ -524,165 +522,203 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 5px;
-    font-size: 9px;
-    letter-spacing: 0.4px;
+    padding: 0 4px;
+    font-size: 8.5px;
+    letter-spacing: 0px;
     color: var(--vellum);
     cursor: ew-resize;
     touch-action: none;
+    white-space: nowrap;
   }
 
   /* =========================================================================
-     07. POLYMETRIC & MORPHOLOGICAL SEQUENCER DECK (UP TO 64 STEPS / LANE)
+     07. MNEMOSYNE-STYLE WEATHERING MATRIX SEQUENCER + BOTTOM ASCII STRIP
      ========================================================================= */
-  #sequencer-deck {
+  #matrix-deck {
     border-top: 1px solid var(--col-div);
     margin-top: 5px;
-    padding: 6px 8px;
-    background: rgba(5, 7, 6, 0.9);
+    padding: 6px 6px 4px 6px;
+    background: rgba(5, 7, 6, 0.92);
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
   }
 
-  .seq-header-row {
+  .matrix-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
-    padding-bottom: 3px;
+    padding-bottom: 4px;
     border-bottom: 1px solid var(--border-inner);
   }
 
-  .seq-title {
+  .matrix-title {
     font-size: 9px;
     font-weight: bold;
-    letter-spacing: 1.5px;
-    color: var(--text-dim);
-  }
-
-  .seq-lane {
-    display: grid;
-    grid-template-columns: 112px 38px 38px 1fr 48px;
-    align-items: center;
-    gap: 5px;
-    background: var(--well);
-    border: 1px solid var(--border-inner);
-    padding: 3px 5px;
-  }
-
-  .seq-lane-name {
-    font-size: 8.5px;
-    font-weight: bold;
-    letter-spacing: 0.5px;
+    letter-spacing: 1.4px;
+    color: var(--vellum);
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
-  .seq-mini-btn {
+  .matrix-controls {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+
+  .m-btn {
     background: #080a09;
-    border: 1px solid #324038;
-    color: var(--text-dim);
+    border: 1px solid #35453c;
+    color: var(--text-main);
     font-family: var(--mono);
     font-size: 8px;
     font-weight: bold;
-    padding: 2px 3px;
+    padding: 3px 6px;
     cursor: pointer;
-    text-align: center;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
-  .seq-mini-btn:hover {
+  .m-btn:hover {
     border-color: var(--border-main);
     color: var(--vellum);
   }
-  .seq-mini-btn.mod-on {
-    background: var(--c-cyan);
-    color: #050605;
-    border-color: var(--c-cyan);
-  }
+  .m-btn.active-green { background: var(--c-green); color: #050605; border-color: var(--c-green); }
+  .m-btn.active-amber { background: var(--c-amber); color: #050605; border-color: var(--c-amber); }
+  .m-btn.active-cyan  { background: var(--c-cyan);  color: #050605; border-color: var(--c-cyan); }
+  .m-btn.active-red   { background: var(--c-red);   color: #050605; border-color: var(--c-red); }
+  .m-btn.active-vel   { background: var(--vellum);  color: #050605; border-color: var(--vellum); }
 
-  .seq-steps-grid {
+  .mini-knobs-group {
     display: flex;
     align-items: center;
+    gap: 6px;
+  }
+  .mini-knob-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 8px;
+    font-weight: bold;
+    cursor: ns-resize;
+    touch-action: none;
+  }
+  .mini-knob-svg {
+    width: 22px;
+    height: 22px;
+    overflow: visible;
+  }
+
+  /* 4-Lane Dotted Step Grid Matching MNEMOSYNE */
+  .matrix-grid-box {
+    background: var(--well);
+    border: 1px solid var(--border-inner);
+    padding: 4px 6px;
+    display: flex;
+    flex-direction: column;
     gap: 2px;
-    min-width: 0;
-    height: 16px;
   }
 
-  .seq-step {
-    flex: 1;
-    min-width: 3px;
-    height: 14px;
-    background: #0a0d0b;
-    border: 1px solid #243029;
-    cursor: pointer;
-    padding: 0;
-    position: relative;
-  }
-  .seq-step:hover {
-    border-color: var(--vellum);
-  }
-  .seq-step.active {
-    background: var(--c-amber);
-    border-color: var(--vellum);
-  }
-  .seq-lane[data-lane="0"] .seq-step.active { background: var(--c-green); }
-  .seq-lane[data-lane="1"] .seq-step.active { background: var(--c-amber); }
-  .seq-lane[data-lane="2"] .seq-step.active { background: var(--c-cyan); }
-  .seq-lane[data-lane="3"] .seq-step.active { background: var(--c-red); }
-
-  .seq-step.playhead {
-    outline: 1px solid var(--vellum);
-    outline-offset: 0px;
-    filter: brightness(1.35);
+  .m-lane {
+    display: grid;
+    grid-template-columns: 44px 1fr 34px;
+    align-items: center;
+    gap: 4px;
+    height: 17px;
   }
 
-  .seq-len-drag {
-    background: #080a09;
-    border: 1px solid #35453c;
-    color: var(--vellum);
+  .m-lane-tag {
+    display: flex;
+    align-items: center;
+    gap: 3px;
     font-size: 8.5px;
     font-weight: bold;
-    text-align: center;
-    padding: 2px 3px;
+    cursor: pointer;
+  }
+  .m-dice-sq {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+    border: 1px solid #35453c;
+    font-size: 7.5px;
+    color: var(--text-dim);
+  }
+  .m-dice-sq:hover {
+    border-color: var(--vellum);
+    color: var(--vellum);
+  }
+
+  .m-steps-row {
+    display: flex;
+    align-items: center;
+    height: 15px;
+    min-width: 0;
+  }
+
+  .m-cell {
+    flex: 1;
+    min-width: 2px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9.5px;
+    font-weight: bold;
+    color: #2f3d35;
+    cursor: pointer;
+    border-right: 1px solid transparent;
+  }
+  .m-cell.beat-mark {
+    border-left: 1px solid #1b241f;
+  }
+  .m-cell:hover {
+    color: var(--vellum);
+  }
+  .m-lane[data-lane="0"] .m-cell.on { color: var(--c-green); }
+  .m-lane[data-lane="1"] .m-cell.on { color: var(--c-amber); }
+  .m-lane[data-lane="2"] .m-cell.on { color: var(--c-cyan); }
+  .m-lane[data-lane="3"] .m-cell.on { color: var(--c-red); }
+
+  .m-cell.head {
+    background: rgba(230, 227, 218, 0.14);
+    color: var(--vellum) !important;
+  }
+
+  .m-len {
+    font-size: 8.5px;
+    font-weight: bold;
+    color: var(--text-dim);
+    text-align: right;
     cursor: ew-resize;
     touch-action: none;
     white-space: nowrap;
   }
-  .seq-len-drag:hover {
-    border-color: var(--c-amber);
-    color: var(--c-amber);
+  .m-len:hover {
+    color: var(--vellum);
   }
 
-  /* =========================================================================
-     08. STANDARDIZED BOTTOM OLED WEATHERING TANK STRIP
-     ========================================================================= */
-  #tank-dock {
-    border-top: 1px solid var(--col-div);
-    margin-top: 5px;
-    padding-top: 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
+  /* Standardized Bottom OLED ASCII Weathering Strip (Always Active) */
+  #tank-canvas {
+    width: 100%;
+    height: 88px;
+    display: block;
+    background: #030403;
+    border-top: 1px solid var(--border-inner);
+    margin-top: 3px;
+    image-rendering: pixelated;
   }
-  #tank-dock.hidden-strip {
+  #tank-canvas.hidden-strip {
     display: none;
   }
 
-  #tank-canvas {
-    width: 100%;
-    height: 92px;
-    display: block;
-    background: #040504;
-    border: 1px solid var(--border-inner);
-    image-rendering: pixelated;
-  }
-
   /* =========================================================================
-     09. RESPONSIVE BREAKPOINTS
+     08. RESPONSIVE BREAKPOINTS
      ========================================================================= */
-  @media (max-width: 980px) {
+  @media (max-width: 860px) {
     .upper-deck { grid-template-columns: 1fr; }
     .vertical-text { display: none; }
     .panel-core {
@@ -696,11 +732,10 @@
     .column:nth-last-child(-n+2) { border-bottom: none; }
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 540px) {
     .panel-core { grid-template-columns: 1fr; }
     .column { border-right: none; border-bottom: 1px solid var(--col-div); }
     .column:last-child { border-bottom: none; }
-    .seq-lane { grid-template-columns: 92px 34px 34px 1fr 44px; }
   }
 </style>
 </head>
@@ -734,8 +769,8 @@
 
             <div class="oled-container">
               <div class="scope-header-bar">
-                <canvas id="scope" width="128" height="36" title="Toggle Waveform / Seismograph"></canvas>
-                <div id="bpm-readout" title="Drag Vertically to Set Tempo (40-220 BPM) | Active When Sequencer Engaged">| | BPM</div>
+                <canvas id="scope" width="120" height="32" title="Toggle Waveform / Seismograph"></canvas>
+                <div id="bpm-readout" title="Drag Vertically for Tempo (40-220 BPM)">| | BPM</div>
               </div>
 
               <div class="oled-row">
@@ -748,7 +783,7 @@
 
               <div class="cycle-box" title="Cycle Audio Input Channel">
                 <button type="button" class="cycle-step" id="btn-mic-prev">&lt;</button>
-                <div class="cycle-label" id="mic-device-label">DEFAULT AUDIO INPUT</div>
+                <div class="cycle-label" id="mic-device-label">DEFAULT INPUT</div>
                 <button type="button" class="cycle-step" id="btn-mic-next">&gt;</button>
               </div>
             </div>
@@ -795,13 +830,13 @@
 
             <!-- DEGRADED ASCII AMBER FREEZE BUFFERS -->
             <div class="amber-container">
-              <button type="button" class="amber-btn" id="btn-amber1" title="Freeze 2.0s Buffer into Amber I [1]">
-                <span>AMBER I [2S]</span>
-                <span class="amb-bar" id="amb1-bar">[░░░░░░░░]</span>
+              <button type="button" class="amber-btn" id="btn-amber1" title="Freeze 2.0s Buffer [1]">
+                <span>AMBER I</span>
+                <span class="amb-bar" id="amb1-bar">[░░░░░░]</span>
               </button>
-              <button type="button" class="amber-btn" id="btn-amber2" title="Freeze 4.0s Buffer into Amber II [2]">
-                <span>AMBER II [4S]</span>
-                <span class="amb-bar" id="amb2-bar">[░░░░░░░░]</span>
+              <button type="button" class="amber-btn" id="btn-amber2" title="Freeze 4.0s Buffer [2]">
+                <span>AMBER II</span>
+                <span class="amb-bar" id="amb2-bar">[░░░░░░]</span>
               </button>
             </div>
           </div>
@@ -1028,21 +1063,21 @@
         <div class="vertical-text">WEATHERING ENGINE</div>
       </div>
 
-      <!-- UTILITY STRIP: A/B MORPH, PRESETS, GROW & VIEW SWITCHES -->
+      <!-- UTILITY STRIP: SCATTER, DRIFT, A/B MORPH & PRESET CYCLER -->
       <div class="utility-strip">
         <div class="util-group">
-          <button class="oled-btn" id="btn-scatter" style="padding:3px 7px;" title="Randomize Dials [S]">SCATTER</button>
-          <button class="oled-btn" id="btn-drift" style="padding:3px 7px;" title="Organic Parameter Drift">DRIFT</button>
+          <button class="oled-btn" id="btn-scatter" style="padding:3px 6px;" title="Randomize Dials [S]">SCATTER</button>
+          <button class="oled-btn" id="btn-drift" style="padding:3px 6px;" title="Organic Parameter Drift">DRIFT</button>
         </div>
 
         <div class="util-group">
-          <button class="oled-btn" id="btn-a" style="padding:3px 6px;" title="Capture State A">A</button>
-          <div class="ascii-scrub" id="ab-scrub" title="Drag to Crossfade A / B">[■░░░░░░░░░]</div>
-          <button class="oled-btn" id="btn-b" style="padding:3px 6px;" title="Capture State B">B</button>
+          <button class="oled-btn" id="btn-a" style="padding:3px 5px;" title="Capture State A">A</button>
+          <div class="ascii-scrub" id="ab-scrub" title="Drag to Crossfade A / B">[■░░░░░░░]</div>
+          <button class="oled-btn" id="btn-b" style="padding:3px 5px;" title="Capture State B">B</button>
         </div>
 
-        <div class="util-group" style="flex:1; min-width:150px;">
-          <button class="oled-btn" id="btn-dump" style="flex:0 0 auto; padding:3px 7px;" title="Store Current Preset">DUMP</button>
+        <div class="util-group" style="flex:1; min-width:140px;">
+          <button class="oled-btn" id="btn-dump" style="flex:0 0 auto; padding:3px 6px;" title="Store Current Preset">DUMP</button>
           <div class="cycle-box" style="flex:1;" title="Cycle Stored Presets">
             <button type="button" class="cycle-step" id="btn-preset-prev">&lt;</button>
             <div class="cycle-label" id="preset-label">INITIALIZED</div>
@@ -1050,28 +1085,68 @@
           </div>
         </div>
 
-        <div class="util-group" style="margin-left:auto;">
-          <button class="oled-btn" id="btn-seq-toggle" style="padding:3px 8px;" title="Start / Stop Polymetric Sequencer [Space]">SEQ: OFF</button>
-          <div class="ascii-scrub" id="grow-scrub" title="Drag to Set Sequencer GROW Mutation Rate">GROW: 0.00</div>
-          <button class="oled-btn" id="btn-expand-viz" style="padding:3px 8px;" title="Expand Weathering Tank to Full-Screen Backdrop [V]">[V] EXPAND</button>
-        </div>
+        <button class="oled-btn" id="btn-expand-viz" style="flex:0 0 auto; padding:3px 7px;" title="Expand Weathering Tank to Full-Frame Backdrop [V]">[V] EXPAND</button>
       </div>
 
-      <!-- POLYMETRIC & MORPHOLOGICAL SEQUENCER DECK (UP TO 64 STEPS / LANE) -->
-      <div id="sequencer-deck">
-        <div class="seq-header-row">
-          <span class="seq-title">· POLYMETRIC MORPH SEQUENCER (DRAG STEP COUNT FOR UNEVEN METERS · UP TO 64) ·</span>
-          <div class="util-group">
-            <button type="button" class="seq-mini-btn" id="btn-seq-dice-all" title="Randomize All 4 Sequencer Lanes">DICE ALL</button>
-            <button type="button" class="seq-mini-btn" id="btn-seq-clear-all" title="Clear All Steps">CLR</button>
+      <!-- MNEMOSYNE-STYLE WEATHERING MATRIX SEQUENCER + ALWAYS-ACTIVE ASCII STRIP -->
+      <div id="matrix-deck">
+        <div class="matrix-header">
+          <span class="matrix-title">WEATHERING MATRIX</span>
+
+          <div class="matrix-controls">
+            <button type="button" class="m-btn active-cyan" id="m-lane-0" data-lane="0" title="Select Lane I (SUBLIMATE)">I. SUBL</button>
+            <button type="button" class="m-btn" id="m-lane-1" data-lane="1" title="Select Lane II (UNDERTOW)">II. UNDR</button>
+            <button type="button" class="m-btn" id="m-lane-2" data-lane="2" title="Select Lane III (TIDE)">III. TIDE</button>
+            <button type="button" class="m-btn" id="m-lane-3" data-lane="3" title="Select Lane IV (TRANSMUTE)">IV. TRNS</button>
+          </div>
+
+          <div class="matrix-controls">
+            <button type="button" class="m-btn" id="btn-seq-toggle" title="Start / Stop Sequencer [Space]">SEQ: OFF</button>
+            <button type="button" class="m-btn active-vel" id="btn-seq-mod" title="Toggle Parameter Modulation on Selected Lane">MOD</button>
+            <button type="button" class="m-btn" id="btn-seq-hold" title="Hold / Freeze Step Playhead">HOLD</button>
+            <div class="m-btn" id="btn-seq-len" title="Drag Horizontally to Resize Selected Lane (1 - 64 Steps)" style="cursor:ew-resize; touch-action:none;">LEN: 16</div>
+            <button type="button" class="m-btn" id="btn-seq-page" title="Cycle 16-Step Page View (for >16 Steps)">PG: 1/1</button>
+            <button type="button" class="m-btn" id="btn-seq-clr" title="Clear Selected Lane Steps">CLR</button>
+          </div>
+
+          <!-- 4 Mini Rotary Encoders (PACE, SUS, GROW, DRAG) Matching MNEMOSYNE -->
+          <div class="mini-knobs-group">
+            <div class="mini-knob-item" id="mk-pace" data-val="0.50" style="color:var(--c-amber);" title="Sequencer Clock Multiplier (PACE)">
+              <span>PACE</span>
+              <svg class="mini-knob-svg" viewBox="0 0 26 26">
+                <circle cx="13" cy="13" r="10" fill="#090c0a" stroke="#a67a3c" stroke-width="1.6"/>
+                <line class="mk-ind" x1="13" y1="13" x2="13" y2="5" stroke="#e6e3da" stroke-width="1.6"/>
+              </svg>
+            </div>
+            <div class="mini-knob-item" id="mk-sus" data-val="0.50" style="color:var(--c-cyan);" title="Step Gate Sustain (SUS)">
+              <span>SUS</span>
+              <svg class="mini-knob-svg" viewBox="0 0 26 26">
+                <circle cx="13" cy="13" r="10" fill="#090c0a" stroke="#487e9e" stroke-width="1.6"/>
+                <line class="mk-ind" x1="13" y1="13" x2="13" y2="5" stroke="#e6e3da" stroke-width="1.6"/>
+              </svg>
+            </div>
+            <div class="mini-knob-item" id="mk-grow" data-val="0.00" style="color:var(--c-green);" title="Stochastic Step Mutation (GROW)">
+              <span>GROW</span>
+              <svg class="mini-knob-svg" viewBox="0 0 26 26">
+                <circle cx="13" cy="13" r="10" fill="#090c0a" stroke="#4e8f60" stroke-width="1.6"/>
+                <line class="mk-ind" x1="13" y1="13" x2="13" y2="5" stroke="#e6e3da" stroke-width="1.6"/>
+              </svg>
+            </div>
+            <div class="mini-knob-item" id="mk-drag" data-val="0.00" style="color:var(--c-red);" title="Micro-Timing Swing / Drag (DRAG)">
+              <span>DRAG</span>
+              <svg class="mini-knob-svg" viewBox="0 0 26 26">
+                <circle cx="13" cy="13" r="10" fill="#090c0a" stroke="#9e4b4b" stroke-width="1.6"/>
+                <line class="mk-ind" x1="13" y1="13" x2="13" y2="5" stroke="#e6e3da" stroke-width="1.6"/>
+              </svg>
+            </div>
           </div>
         </div>
-        <div id="seq-lanes-container"></div>
-      </div>
 
-      <!-- STANDARDIZED BOTTOM OLED WEATHERING TANK STRIP -->
-      <div id="tank-dock">
-        <canvas id="tank-canvas" width="960" height="92" title="Cellular Weathering &amp; Amber Strata Tank"></canvas>
+        <!-- 4-LANE DOTTED POLYMETRIC GRID + ALWAYS-ACTIVE ASCII STRIP -->
+        <div class="matrix-grid-box">
+          <div id="matrix-lanes"></div>
+          <canvas id="tank-canvas" width="900" height="88" title="Live ASCII Weathering &amp; Amber Strata Strip"></canvas>
+        </div>
       </div>
 
     </div>
@@ -1283,7 +1358,6 @@
         this.lpf_y = Number.isNaN(filtered_wet) ? 0 : filtered_wet;
 
         // AMBER I & II FREEZE BUFFERS + TRUE 1.0x UNITY-PITCH REVERSE READ HEAD
-        // Growing sAgo by 2 samples per sample moves the read pointer backward at -1.0x speed.
         const amb_deg_alpha = Math.max(0.001, Math.min(1.0, (this.scale(n_rhizome, 0.0, 1.0, 18000.0, 1000.0) / sr) * this.TWOPI));
 
         const freeze_sig = this.amber_freeze.read(88196);
@@ -1355,7 +1429,7 @@
   `;
 
   /* ===========================================================================
-     02. STATE & POLYMETRIC SEQUENCER CONFIGURATION
+     02. STATE & POLYMETRIC WEATHERING MATRIX CONFIGURATION
      =========================================================================== */
   function clamp(v, lo, hi) {
     return v < lo ? lo : (v > hi ? hi : v);
@@ -1380,18 +1454,27 @@
 
     bpm: 112,
     seqRunning: false,
-    growRate: 0.0,
+    seqHold: false,
+    selectedLaneIdx: 0,
+    pageIdx: 0,
     seqTick: 0,
     seqAccumSec: 0,
 
+    miniParams: {
+      pace: 0.50,
+      sus:  0.50,
+      grow: 0.00,
+      drag: 0.00
+    },
+
     lanes: [
-      { id: 'sublimate', label: 'I. SUBLIMATE',  color: '#4e8f60', len: 16, mod: true,  steps: new Uint8Array(64) },
-      { id: 'undertow',  label: 'II. UNDERTOW',  color: '#a67a3c', len: 12, mod: true,  steps: new Uint8Array(64) },
-      { id: 'tide',      label: 'III. TIDE',     color: '#487e9e', len: 14, mod: false, steps: new Uint8Array(64) },
-      { id: 'transmute', label: 'IV. TRANSMUTE', color: '#9e4b4b', len: 16, mod: false, steps: new Uint8Array(64) }
+      { id: 'sublimate', roman: 'I.',   color: '#4e8f60', len: 16, mod: true, steps: new Uint8Array(64) },
+      { id: 'undertow',  roman: 'II.',  color: '#a67a3c', len: 12, mod: true, steps: new Uint8Array(64) },
+      { id: 'tide',      roman: 'III.', color: '#487e9e', len: 14, mod: true, steps: new Uint8Array(64) },
+      { id: 'transmute', roman: 'IV.',  color: '#9e4b4b', len: 16, mod: true, steps: new Uint8Array(64) }
     ],
 
-    micDevices: [{ deviceId: '', label: 'DEFAULT AUDIO INPUT' }],
+    micDevices: [{ deviceId: '', label: 'DEFAULT INPUT' }],
     micIdx: 0,
     selectedMicId: '',
 
@@ -1404,7 +1487,7 @@
   };
 
   // Seed default musical step patterns
-  [0, 5, 10].forEach(i => { state.lanes[0].steps[i] = 1; });
+  [0, 5, 10, 14].forEach(i => { state.lanes[0].steps[i] = 1; });
   [3, 7, 11].forEach(i => { state.lanes[1].steps[i] = 1; });
   [0, 4, 8, 12].forEach(i => { state.lanes[2].steps[i] = 1; });
   [2, 9, 14].forEach(i => { state.lanes[3].steps[i] = 1; });
@@ -1507,7 +1590,7 @@
      04. HARDWARE INPUT CYCLER & FILE INGEST (IPADOS COMPATIBLE)
      =========================================================================== */
   function syncMicCyclerUI() {
-    const dev = state.micDevices[state.micIdx] || { deviceId: '', label: 'DEFAULT AUDIO INPUT' };
+    const dev = state.micDevices[state.micIdx] || { deviceId: '', label: 'DEFAULT INPUT' };
     state.selectedMicId = dev.deviceId;
     document.getElementById('mic-device-label').textContent = dev.label;
   }
@@ -1588,10 +1671,10 @@
   }
 
   /* ===========================================================================
-     05. POLYMETRIC & MORPHOLOGICAL SEQUENCER UI + CLOCK
+     05. MNEMOSYNE-STYLE POLYMETRIC MATRIX SEQUENCER
      =========================================================================== */
   const bpmEl = document.getElementById('bpm-readout');
-  const seqContainer = document.getElementById('seq-lanes-container');
+  const matrixLanesEl = document.getElementById('matrix-lanes');
 
   function updateBpmUI() {
     if (!state.seqRunning) {
@@ -1603,143 +1686,172 @@
     }
   }
 
-  function renderSequencerLanes() {
-    seqContainer.innerHTML = '';
+  function syncMatrixHeaderUI() {
+    const selLane = state.lanes[state.selectedLaneIdx];
+    const laneColors = ['active-green', 'active-amber', 'active-cyan', 'active-red'];
+    for (let i = 0; i < 4; i++) {
+      const btn = document.getElementById(`m-lane-${i}`);
+      btn.classList.remove('active-green', 'active-amber', 'active-cyan', 'active-red');
+      if (i === state.selectedLaneIdx) btn.classList.add(laneColors[i]);
+    }
+
+    document.getElementById('btn-seq-mod').classList.toggle('active-vel', selLane.mod);
+    document.getElementById('btn-seq-hold').classList.toggle('active-amber', state.seqHold);
+    document.getElementById('btn-seq-len').textContent = `LEN: ${selLane.len}`;
+
+    const maxPages = Math.max(1, Math.ceil(selLane.len / 16));
+    if (state.pageIdx >= maxPages) state.pageIdx = 0;
+    document.getElementById('btn-seq-page').textContent = `PG: ${state.pageIdx + 1}/${maxPages}`;
+  }
+
+  function renderMatrixGrid() {
+    matrixLanesEl.innerHTML = '';
+    const selLane = state.lanes[state.selectedLaneIdx];
+    const pageOffset = state.pageIdx * 16;
+
     state.lanes.forEach((lane, lIdx) => {
       const row = document.createElement('div');
-      row.className = 'seq-lane';
+      row.className = 'm-lane';
       row.dataset.lane = String(lIdx);
 
-      const lbl = document.createElement('div');
-      lbl.className = 'seq-lane-name';
-      lbl.style.color = lane.color;
-      lbl.textContent = lane.label;
-
-      const modBtn = document.createElement('button');
-      modBtn.type = 'button';
-      modBtn.className = 'seq-mini-btn' + (lane.mod ? ' mod-on' : '');
-      modBtn.textContent = 'MOD';
-      modBtn.title = 'Toggle Parameter Modulation on Active Steps';
-      modBtn.addEventListener('click', () => {
-        lane.mod = !lane.mod;
-        modBtn.classList.toggle('mod-on', lane.mod);
-        showToast(`${lane.label} MOD: ${lane.mod ? 'ON' : 'OFF'}`);
+      // Left: Roman numeral + per-lane Dice button
+      const tag = document.createElement('div');
+      tag.className = 'm-lane-tag';
+      tag.style.color = lane.color;
+      tag.innerHTML = `<span>${lane.roman.padEnd(4, ' ')}</span><span class="m-dice-sq" title="Randomize ${lane.id.toUpperCase()} Steps">⚄</span>`;
+      tag.querySelector('span:first-child').addEventListener('click', () => {
+        state.selectedLaneIdx = lIdx;
+        syncMatrixHeaderUI();
+        renderMatrixGrid();
+      });
+      tag.querySelector('.m-dice-sq').addEventListener('click', (e) => {
+        e.stopPropagation();
+        for (let s = 0; s < 64; s++) lane.steps[s] = Math.random() < 0.34 ? 1 : 0;
+        renderMatrixGrid();
+        showToast(`${lane.id.toUpperCase()} // DICE ROLLED`);
       });
 
-      const diceBtn = document.createElement('button');
-      diceBtn.type = 'button';
-      diceBtn.className = 'seq-mini-btn';
-      diceBtn.textContent = 'DICE';
-      diceBtn.title = 'Randomize Steps on This Lane';
-      diceBtn.addEventListener('click', () => {
-        for (let s = 0; s < 64; s++) {
-          lane.steps[s] = Math.random() < 0.34 ? 1 : 0;
+      // Center: 16-column dotted grid window (with | / [|] markers like MNEMOSYNE)
+      const stepsRow = document.createElement('div');
+      stepsRow.className = 'm-steps-row';
+      const activeStep = state.seqRunning ? (state.seqTick % lane.len) : -1;
+
+      for (let col = 0; col < 16; col++) {
+        const stepIdx = pageOffset + col;
+        const cell = document.createElement('div');
+        const isBeat = (col % 4 === 0);
+        const inRange = stepIdx < lane.len;
+        const isOn = inRange && lane.steps[stepIdx] === 1;
+        const isHead = inRange && (stepIdx === activeStep);
+
+        cell.className = 'm-cell' +
+          (isBeat ? ' beat-mark' : '') +
+          (isOn ? ' on' : '') +
+          (isHead ? ' head' : '');
+
+        if (!inRange) {
+          cell.textContent = ' ';
+          cell.style.cursor = 'default';
+        } else if (isHead && isOn) {
+          cell.textContent = '[|]';
+        } else if (isOn) {
+          cell.textContent = '|';
+        } else {
+          cell.textContent = '·';
         }
-        renderSequencerLanes();
-        showToast(`${lane.label} // DICE ROLLED`);
-      });
 
-      const stepsGrid = document.createElement('div');
-      stepsGrid.className = 'seq-steps-grid';
-      const activeIdx = state.seqRunning ? (state.seqTick % lane.len) : -1;
-
-      for (let s = 0; s < lane.len; s++) {
-        const cell = document.createElement('button');
-        cell.type = 'button';
-        cell.className = 'seq-step' +
-          (lane.steps[s] ? ' active' : '') +
-          (s === activeIdx ? ' playhead' : '');
-        cell.addEventListener('click', () => {
-          lane.steps[s] = lane.steps[s] ? 0 : 1;
-          cell.classList.toggle('active', lane.steps[s] === 1);
-        });
-        stepsGrid.appendChild(cell);
+        if (inRange) {
+          cell.addEventListener('click', () => {
+            lane.steps[stepIdx] = lane.steps[stepIdx] ? 0 : 1;
+            renderMatrixGrid();
+          });
+        }
+        stepsRow.appendChild(cell);
       }
 
-      // Click-and-drag step count badge (1 to 64 steps for uneven polymetrics)
-      const lenBadge = document.createElement('div');
-      lenBadge.className = 'seq-len-drag';
-      lenBadge.textContent = `[${String(lane.len).padStart(2, '0')}]`;
-      lenBadge.title = 'Drag Horizontally to Resize Lane Length (1 - 64 Steps)';
+      // Right: Polymetric /len counter (click-and-drag horizontally 1..64)
+      const lenEl = document.createElement('div');
+      lenEl.className = 'm-len';
+      lenEl.textContent = `/${lane.len}`;
+      lenEl.title = 'Drag Horizontally to Set Uneven Step Length (1 - 64)';
 
-      let draggingLen = false;
-      let startX = 0;
-      let startLen = lane.len;
-
-      lenBadge.addEventListener('pointerdown', (e) => {
+      let dragLen = false, startX = 0, startLen = lane.len;
+      lenEl.addEventListener('pointerdown', (e) => {
         e.preventDefault();
-        draggingLen = true;
+        dragLen = true;
         startX = e.clientX;
         startLen = lane.len;
-        try { lenBadge.setPointerCapture(e.pointerId); } catch (_) {}
+        state.selectedLaneIdx = lIdx;
+        syncMatrixHeaderUI();
+        try { lenEl.setPointerCapture(e.pointerId); } catch (_) {}
       });
-      lenBadge.addEventListener('pointermove', (e) => {
-        if (!draggingLen) return;
-        const deltaSteps = Math.round((e.clientX - startX) / 6);
-        const nextLen = clamp(startLen + deltaSteps, 1, 64);
+      lenEl.addEventListener('pointermove', (e) => {
+        if (!dragLen) return;
+        const nextLen = clamp(startLen + Math.round((e.clientX - startX) / 5), 1, 64);
         if (nextLen !== lane.len) {
           lane.len = nextLen;
-          renderSequencerLanes();
+          syncMatrixHeaderUI();
+          renderMatrixGrid();
         }
       });
-      const stopLenDrag = (e) => {
-        if (!draggingLen) return;
-        draggingLen = false;
-        try { lenBadge.releasePointerCapture(e.pointerId); } catch (_) {}
+      const endLen = (e) => {
+        if (!dragLen) return;
+        dragLen = false;
+        try { lenEl.releasePointerCapture(e.pointerId); } catch (_) {}
       };
-      lenBadge.addEventListener('pointerup', stopLenDrag);
-      lenBadge.addEventListener('pointercancel', stopLenDrag);
+      lenEl.addEventListener('pointerup', endLen);
+      lenEl.addEventListener('pointercancel', endLen);
 
-      row.appendChild(lbl);
-      row.appendChild(modBtn);
-      row.appendChild(diceBtn);
-      row.appendChild(stepsGrid);
-      row.appendChild(lenBadge);
-      seqContainer.appendChild(row);
+      row.appendChild(tag);
+      row.appendChild(stepsRow);
+      row.appendChild(lenEl);
+      matrixLanesEl.appendChild(row);
     });
   }
 
   function advanceSequencerStep() {
-    state.seqTick++;
+    if (!state.seqHold) {
+      state.seqTick++;
+    }
 
-    // GROW parameter stochastically mutates step patterns across cycles
-    if (state.growRate > 0.02) {
+    // GROW parameter stochastically mutates step patterns across bars
+    const grow = state.miniParams.grow;
+    if (grow > 0.02 && !state.seqHold) {
       state.lanes.forEach((lane) => {
-        if (Math.random() < state.growRate * 0.22) {
+        if (Math.random() < grow * 0.24) {
           const idx = Math.floor(Math.random() * lane.len);
           lane.steps[idx] = lane.steps[idx] ? 0 : 1;
         }
       });
     }
 
-    // Apply per-lane step modulation to target DSP parameters
+    // Modulate target parameters on active steps
+    const susDepth = 0.25 + state.miniParams.sus * 0.65;
     state.lanes.forEach((lane) => {
       const pos = state.seqTick % lane.len;
       const gate = lane.steps[pos] === 1;
       const baseVal = state.params[lane.id] || 0;
-
       if (lane.mod) {
-        const modVal = gate ? clamp(baseVal + 0.58, 0, 1) : baseVal;
-        sendParam(lane.id, modVal);
+        sendParam(lane.id, gate ? clamp(baseVal + susDepth, 0, 1) : baseVal);
       } else {
         sendParam(lane.id, baseVal);
       }
     });
 
-    renderSequencerLanes();
+    renderMatrixGrid();
   }
 
   /* ===========================================================================
-     06. CELLULAR WEATHERING & AMBER OIL-ART TANK (BOTTOM OLED + [V] BACKDROP)
+     06. ALWAYS-ALIVE NOITA-STYLE WEATHERING & AMBER OIL-ART STRIP
      =========================================================================== */
   const tankCanvas = document.getElementById('tank-canvas');
   const tankCtx = tankCanvas.getContext('2d', { alpha: false });
   const bgVizCanvas = document.getElementById('bg-viz-canvas');
   const bgVizCtx = bgVizCanvas.getContext('2d', { alpha: false });
 
-  // Material IDs: 0=VOID, 1=AMBER_I, 2=AMBER_II, 3=WEATHERED_DUST, 4=TIDE_OIL
-  const TANK_COLS = 136;
-  const TANK_ROWS = 14;
+  // Material IDs: 0=VOID, 1=AMBER_I, 2=AMBER_II, 3=WEATHERED_SAND, 4=OIL_WAVE
+  const TANK_COLS = 116;
+  const TANK_ROWS = 11;
   let tankGrid = new Uint8Array(TANK_COLS * TANK_ROWS);
   let tankColor = new Uint8Array(TANK_COLS * TANK_ROWS); // 0=amber, 1=green, 2=cyan, 3=red
 
@@ -1747,10 +1859,10 @@
   const TANK_COLORS = ['#a67a3c', '#4e8f60', '#487e9e', '#9e4b4b', '#e6e3da'];
 
   function spawnAmberCluster(matId, colorId) {
-    const cx = Math.floor(14 + Math.random() * (TANK_COLS - 28));
-    const cy = Math.floor(1 + Math.random() * 4);
-    const rx = 5 + Math.floor(Math.random() * 6);
-    const ry = 2 + Math.floor(Math.random() * 2);
+    const cx = Math.floor(10 + Math.random() * (TANK_COLS - 20));
+    const cy = Math.floor(1 + Math.random() * 3);
+    const rx = 4 + Math.floor(Math.random() * 5);
+    const ry = 1 + Math.floor(Math.random() * 2);
 
     for (let r = Math.max(0, cy - ry); r <= Math.min(TANK_ROWS - 3, cy + ry); r++) {
       for (let c = Math.max(1, cx - rx); c <= Math.min(TANK_COLS - 2, cx + rx); c++) {
@@ -1758,6 +1870,23 @@
           const idx = r * TANK_COLS + c;
           tankGrid[idx] = matId;
           tankColor[idx] = colorId;
+        }
+      }
+    }
+  }
+
+  // Seed initial geological strata so the bottom strip is alive at all times on boot
+  function seedInitialWeatheringStrata() {
+    for (let k = 0; k < 7; k++) {
+      const cx = Math.floor(((k + 0.5) / 7) * TANK_COLS);
+      const colId = k % 4;
+      for (let r = TANK_ROWS - 4; r < TANK_ROWS; r++) {
+        for (let c = Math.max(1, cx - 5); c <= Math.min(TANK_COLS - 2, cx + 5); c++) {
+          if (Math.random() < 0.65) {
+            const idx = r * TANK_COLS + c;
+            tankGrid[idx] = (r === TANK_ROWS - 4) ? 1 : 3;
+            tankColor[idx] = colId;
+          }
         }
       }
     }
@@ -1771,14 +1900,22 @@
     const entropy = state.params.entropy;
     const undertow = state.params.undertow;
 
-    const weatherRate = clamp(patina * 0.45 + thicket * 0.35 + entropy * 0.55 + audioRms * 0.4, 0.01, 0.95);
-    const turbulence = clamp(tide * 0.65 + sway * 0.55 + undertow * 0.60 + audioRms * 0.5, 0, 1.5);
+    const weatherRate = clamp(0.04 + patina * 0.45 + thicket * 0.35 + entropy * 0.55 + audioRms * 0.4, 0.04, 0.95);
+    const turbulence = clamp(0.12 + tide * 0.65 + sway * 0.55 + undertow * 0.60 + audioRms * 0.5, 0.12, 1.5);
 
-    // Replenish crystalline amber chunks while Amber I or II is latched
-    if (state.amber1 && Math.random() < 0.08) spawnAmberCluster(1, 0);
-    if (state.amber2 && Math.random() < 0.06) spawnAmberCluster(2, 2);
+    // Continuous ambient mineral precipitation + Amber I/II crystallization
+    if (state.amber1 && Math.random() < 0.10) spawnAmberCluster(1, 0);
+    if (state.amber2 && Math.random() < 0.08) spawnAmberCluster(2, 2);
 
-    // Bottom-up cellular automata update (falling sand + oil wave sloshing)
+    if (Math.random() < 0.22) {
+      const rc = 1 + Math.floor(Math.random() * (TANK_COLS - 2));
+      if (tankGrid[rc] === 0) {
+        tankGrid[rc] = 3;
+        tankColor[rc] = Math.floor(Math.random() * 4);
+      }
+    }
+
+    // Bottom-up cellular automata update (falling grains + oil wave sloshing)
     for (let r = TANK_ROWS - 2; r >= 0; r--) {
       const scanDir = (r % 2 === 0) ? 1 : -1;
       for (let step = 0; step < TANK_COLS; step++) {
@@ -1787,26 +1924,21 @@
         const mat = tankGrid[idx];
         if (mat === 0) continue;
 
-        // Solid Amber chunks erode from their bottom/exposed edges into falling dust
         if (mat === 1 || mat === 2) {
           const belowIdx = (r + 1) * TANK_COLS + c;
           if (tankGrid[belowIdx] === 0 && Math.random() < weatherRate * 0.14) {
-            tankGrid[idx] = 3; // Erode into falling dust grain
-            if (Math.random() < 0.35) {
-              tankColor[idx] = (Math.random() < 0.5) ? 1 : 3; // Mineral color seepage
-            }
+            tankGrid[idx] = 3;
+            if (Math.random() < 0.35) tankColor[idx] = (Math.random() < 0.5) ? 1 : 3;
           }
           continue;
         }
 
-        // Falling Dust (3) & Liquefied Oil/Tide (4)
         const belowIdx = (r + 1) * TANK_COLS + c;
         if (tankGrid[belowIdx] === 0) {
           tankGrid[belowIdx] = turbulence > 0.55 ? 4 : mat;
           tankColor[belowIdx] = tankColor[idx];
           tankGrid[idx] = 0;
         } else {
-          // Diagonal slide or horizontal wave slosh
           const sloshBias = Math.sin(timeSec * (1.8 + turbulence * 3.0) + r * 0.5) * turbulence;
           const dir = (sloshBias + (Math.random() - 0.5)) >= 0 ? 1 : -1;
           const nc = c + dir;
@@ -1817,9 +1949,8 @@
               tankGrid[diagIdx] = mat;
               tankColor[diagIdx] = tankColor[idx];
               tankGrid[idx] = 0;
-            } else if (turbulence > 0.28 && tankGrid[sideIdx] === 0 && Math.random() < turbulence * 0.65) {
+            } else if (turbulence > 0.25 && tankGrid[sideIdx] === 0 && Math.random() < turbulence * 0.65) {
               tankGrid[sideIdx] = 4;
-              // Color seepage between adjacent oil cells
               tankColor[sideIdx] = Math.random() < 0.25 ? ((tankColor[idx] + 1) % 4) : tankColor[idx];
               tankGrid[idx] = 0;
             }
@@ -1827,21 +1958,41 @@
         }
       }
     }
+
+    // Recycle bottom floor slowly when full so weathering never stagnates
+    let bottomFill = 0;
+    const lastRowOff = (TANK_ROWS - 1) * TANK_COLS;
+    for (let c = 1; c < TANK_COLS - 1; c++) {
+      if (tankGrid[lastRowOff + c] !== 0) bottomFill++;
+    }
+    if (bottomFill > TANK_COLS * 0.72) {
+      const clearC = 1 + Math.floor(Math.random() * (TANK_COLS - 2));
+      tankGrid[lastRowOff + clearC] = 0;
+    }
   }
 
   function renderTankToContext(targetCtx, widthPx, heightPx, isBackdrop) {
-    targetCtx.fillStyle = isBackdrop ? '#050605' : '#040504';
+    targetCtx.fillStyle = isBackdrop ? '#050605' : '#030403';
     targetCtx.fillRect(0, 0, widthPx, heightPx);
 
     const cellW = widthPx / TANK_COLS;
     const cellH = heightPx / TANK_ROWS;
-    const fontPx = Math.max(8, Math.floor(Math.min(cellW, cellH) * 0.92));
+    const fontPx = Math.max(8, Math.floor(Math.min(cellW, cellH) * 0.94));
 
     targetCtx.font = `bold ${fontPx}px 'Courier New', Menlo, monospace`;
     targetCtx.textAlign = 'center';
     targetCtx.textBaseline = 'middle';
 
     if (isBackdrop) targetCtx.globalAlpha = 0.42;
+
+    // Draw downward playhead indicator on top row matching selected sequencer lane
+    if (state.seqRunning) {
+      const selLane = state.lanes[state.selectedLaneIdx];
+      const stepInPage = (state.seqTick % selLane.len) % 16;
+      const headCol = Math.floor(((stepInPage + 0.5) / 16) * TANK_COLS);
+      targetCtx.fillStyle = '#9e4b4b';
+      targetCtx.fillText('↓', headCol * cellW + cellW * 0.5, cellH * 0.52);
+    }
 
     for (let r = 0; r < TANK_ROWS; r++) {
       const py = r * cellH + cellH * 0.52;
@@ -1915,22 +2066,21 @@
       }
     }
 
-    // Update degraded ASCII progress bars on Amber I (2s) & Amber II (4s)
     const bar1El = document.getElementById('amb1-bar');
     const bar2El = document.getElementById('amb2-bar');
     if (state.amber1) {
       state.amber1Phase = (state.amber1Phase + dtSec / 2.0) % 1.0;
-      const n = Math.floor(state.amber1Phase * 8) + 1;
-      bar1El.textContent = `[${'▓'.repeat(n)}${'░'.repeat(8 - n)}]`;
+      const n = Math.floor(state.amber1Phase * 6) + 1;
+      bar1El.textContent = `[${'▓'.repeat(n)}${'░'.repeat(6 - n)}]`;
     } else {
-      bar1El.textContent = '[░░░░░░░░]';
+      bar1El.textContent = '[░░░░░░]';
     }
     if (state.amber2) {
       state.amber2Phase = (state.amber2Phase + dtSec / 4.0) % 1.0;
-      const n = Math.floor(state.amber2Phase * 8) + 1;
-      bar2El.textContent = `[${'▓'.repeat(n)}${'░'.repeat(8 - n)}]`;
+      const n = Math.floor(state.amber2Phase * 6) + 1;
+      bar2El.textContent = `[${'▓'.repeat(n)}${'░'.repeat(6 - n)}]`;
     } else {
-      bar2El.textContent = '[░░░░░░░░]';
+      bar2El.textContent = '[░░░░░░]';
     }
 
     return rms;
@@ -1942,7 +2092,9 @@
     lastMs = nowMs;
 
     if (state.seqRunning) {
-      const stepDur = (60.0 / state.bpm) * 0.25; // 16th-note master clock
+      const paceMult = 0.5 + state.miniParams.pace * 1.5; // 0.5x to 2.0x clock multiplier
+      const swingBias = (state.seqTick % 2 === 1) ? (1.0 + state.miniParams.drag * 0.35) : (1.0 - state.miniParams.drag * 0.25);
+      const stepDur = ((60.0 / state.bpm) * 0.25 / paceMult) * swingBias;
       state.seqAccumSec += dtSec;
       while (state.seqAccumSec >= stepDur) {
         state.seqAccumSec -= stepDur;
@@ -1973,7 +2125,7 @@
     const rect = tankCanvas.getBoundingClientRect();
     if (rect.width > 0) {
       tankCanvas.width = Math.floor(rect.width * dpr);
-      tankCanvas.height = Math.floor(92 * dpr);
+      tankCanvas.height = Math.floor(88 * dpr);
     }
   }
 
@@ -2045,7 +2197,7 @@
   }
 
   function renderAbBar(mix) {
-    const cells = 10;
+    const cells = 8;
     const pos = clamp(Math.round(mix * (cells - 1)), 0, cells - 1);
     let str = '';
     for (let i = 0; i < cells; i++) str += (i === pos) ? '■' : '░';
@@ -2076,13 +2228,13 @@
     updateBpmUI();
     if (!state.seqRunning) {
       syncAllParams();
-      renderSequencerLanes();
+      renderMatrixGrid();
     }
     showToast(`SEQUENCER: ${state.seqRunning ? `RUNNING (${state.bpm} BPM)` : 'STOPPED'}`);
   }
 
   function wireUI() {
-    // Rotary knobs (Pointer Events for Desktop + iPad Touch)
+    // Primary rotary knobs
     document.querySelectorAll('.knob-svg').forEach(knob => {
       const wrap = knob.closest('.knob-container');
       setKnobValue(knob, parseFloat(knob.dataset.val));
@@ -2114,6 +2266,106 @@
         setKnobValue(knob, parseFloat(knob.dataset.default));
         showToast(`${knob.id.toUpperCase()} RESET`);
       });
+    });
+
+    // Mini Matrix Knobs (PACE, SUS, GROW, DRAG)
+    const miniIds = ['pace', 'sus', 'grow', 'drag'];
+    miniIds.forEach(mId => {
+      const el = document.getElementById(`mk-${mId}`);
+      const ind = el.querySelector('.mk-ind');
+      const updateMini = (v) => {
+        v = clamp(v, 0, 1);
+        state.miniParams[mId] = v;
+        el.dataset.val = v.toFixed(3);
+        const ang = -135 + v * 270;
+        ind.setAttribute('transform', `rotate(${ang.toFixed(1)}, 13, 13)`);
+      };
+      updateMini(parseFloat(el.dataset.val));
+
+      let dragM = false, sY = 0, sV = 0;
+      el.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        dragM = true; sY = e.clientY; sV = state.miniParams[mId];
+        try { el.setPointerCapture(e.pointerId); } catch (_) {}
+      });
+      el.addEventListener('pointermove', (e) => {
+        if (!dragM) return;
+        updateMini(sV + (sY - e.clientY) * 0.006);
+      });
+      const endM = (e) => {
+        if (!dragM) return;
+        dragM = false;
+        showToast(`${mId.toUpperCase()}: ${state.miniParams[mId].toFixed(2)}`);
+        try { el.releasePointerCapture(e.pointerId); } catch (_) {}
+      };
+      el.addEventListener('pointerup', endM);
+      el.addEventListener('pointercancel', endM);
+    });
+
+    // Matrix Header Controls
+    for (let i = 0; i < 4; i++) {
+      document.getElementById(`m-lane-${i}`).addEventListener('click', () => {
+        state.selectedLaneIdx = i;
+        syncMatrixHeaderUI();
+        renderMatrixGrid();
+      });
+    }
+
+    document.getElementById('btn-seq-toggle').addEventListener('click', toggleSequencer);
+
+    document.getElementById('btn-seq-mod').addEventListener('click', () => {
+      const lane = state.lanes[state.selectedLaneIdx];
+      lane.mod = !lane.mod;
+      syncMatrixHeaderUI();
+      showToast(`${lane.id.toUpperCase()} MOD: ${lane.mod ? 'ON' : 'OFF'}`);
+    });
+
+    document.getElementById('btn-seq-hold').addEventListener('click', () => {
+      state.seqHold = !state.seqHold;
+      syncMatrixHeaderUI();
+      showToast(`SEQUENCER HOLD: ${state.seqHold ? 'ON' : 'OFF'}`);
+    });
+
+    const lenBtn = document.getElementById('btn-seq-len');
+    let dragHdrLen = false, hdrStartX = 0, hdrStartLen = 16;
+    lenBtn.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      dragHdrLen = true;
+      hdrStartX = e.clientX;
+      hdrStartLen = state.lanes[state.selectedLaneIdx].len;
+      try { lenBtn.setPointerCapture(e.pointerId); } catch (_) {}
+    });
+    lenBtn.addEventListener('pointermove', (e) => {
+      if (!dragHdrLen) return;
+      const lane = state.lanes[state.selectedLaneIdx];
+      const next = clamp(hdrStartLen + Math.round((e.clientX - hdrStartX) / 5), 1, 64);
+      if (next !== lane.len) {
+        lane.len = next;
+        syncMatrixHeaderUI();
+        renderMatrixGrid();
+      }
+    });
+    const endHdrLen = (e) => {
+      if (!dragHdrLen) return;
+      dragHdrLen = false;
+      try { lenBtn.releasePointerCapture(e.pointerId); } catch (_) {}
+    };
+    lenBtn.addEventListener('pointerup', endHdrLen);
+    lenBtn.addEventListener('pointercancel', endHdrLen);
+
+    document.getElementById('btn-seq-page').addEventListener('click', () => {
+      const lane = state.lanes[state.selectedLaneIdx];
+      const maxPages = Math.max(1, Math.ceil(lane.len / 16));
+      state.pageIdx = (state.pageIdx + 1) % maxPages;
+      syncMatrixHeaderUI();
+      renderMatrixGrid();
+    });
+
+    document.getElementById('btn-seq-clr').addEventListener('click', () => {
+      const lane = state.lanes[state.selectedLaneIdx];
+      lane.steps.fill(0);
+      renderMatrixGrid();
+      showToast(`${lane.id.toUpperCase()} CLEARED`);
     });
 
     // BPM vertical drag on OLED readout
@@ -2272,42 +2524,14 @@
     document.getElementById('btn-preset-next').addEventListener('click', () => stepPreset(1));
     document.getElementById('preset-label').addEventListener('click', () => stepPreset(1));
 
-    // Sequencer & GROW controls
-    document.getElementById('btn-seq-toggle').addEventListener('click', toggleSequencer);
-
-    const growScrub = document.getElementById('grow-scrub');
-    let dragGrow = false;
-    const handleGrowPointer = (clientX) => {
-      const rect = growScrub.getBoundingClientRect();
-      state.growRate = clamp((clientX - rect.left) / Math.max(1, rect.width), 0, 1);
-      growScrub.textContent = `GROW: ${state.growRate.toFixed(2)}`;
-    };
-    growScrub.addEventListener('pointerdown', (e) => { e.preventDefault(); dragGrow = true; handleGrowPointer(e.clientX); });
-    window.addEventListener('pointermove', (e) => { if (dragGrow) handleGrowPointer(e.clientX); });
-    window.addEventListener('pointerup', () => { dragGrow = false; });
-
-    document.getElementById('btn-seq-dice-all').addEventListener('click', () => {
-      state.lanes.forEach(l => {
-        for (let s = 0; s < 64; s++) l.steps[s] = Math.random() < 0.34 ? 1 : 0;
-      });
-      renderSequencerLanes();
-      showToast('SEQUENCER // ALL LANES RANDOMIZED');
-    });
-
-    document.getElementById('btn-seq-clear-all').addEventListener('click', () => {
-      state.lanes.forEach(l => l.steps.fill(0));
-      renderSequencerLanes();
-      showToast('SEQUENCER // CLEARED');
-    });
-
     // Full-frame visualiser backdrop toggle [V]
     document.getElementById('btn-expand-viz').addEventListener('click', (e) => {
       state.expandViz = !state.expandViz;
       bgVizCanvas.classList.toggle('active', state.expandViz);
-      document.getElementById('tank-dock').classList.toggle('hidden-strip', state.expandViz);
+      tankCanvas.classList.toggle('hidden-strip', state.expandViz);
       e.target.classList.toggle('active-green', state.expandViz);
       resizeCanvases();
-      showToast(state.expandViz ? 'TANK // FULL-FRAME BACKDROP' : 'TANK // STANDARD BOTTOM STRIP');
+      showToast(state.expandViz ? 'TANK // FULL-FRAME BACKDROP' : 'TANK // BOTTOM MATRIX STRIP');
     });
 
     // Drag-and-drop audio anywhere
@@ -2334,8 +2558,10 @@
   }
 
   window.onload = () => {
+    seedInitialWeatheringStrata();
     refreshPresetCycler();
-    renderSequencerLanes();
+    syncMatrixHeaderUI();
+    renderMatrixGrid();
     updateBpmUI();
     wireUI();
     resizeCanvases();
