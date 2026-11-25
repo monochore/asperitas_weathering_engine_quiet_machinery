@@ -134,7 +134,7 @@
   }
 
   /* =========================================================================
-     03. ETCHED MINERAL HARDWARE CHASSIS (COMPACT 940PX MNEMOSYNE PROPORTIONS)
+     03. ETCHED MINERAL HARDWARE CHASSIS
      ========================================================================= */
   #chassis-wrap {
     position: relative;
@@ -196,7 +196,7 @@
 
   .panel-core {
     display: grid;
-    grid-template-columns: 208px 1fr 1.15fr 1fr;
+    grid-template-columns: 214px 1fr 1.15fr 1fr;
     border-left: 1px solid var(--col-div);
     border-right: 1px solid var(--col-div);
     min-width: 0;
@@ -295,9 +295,9 @@
     border: 1px solid #35453c;
     color: var(--text-main);
     font-family: var(--mono);
-    font-size: 8px;
+    font-size: 7.8px;
     font-weight: bold;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.3px;
     padding: 3px 2px;
     cursor: pointer;
     text-transform: uppercase;
@@ -337,7 +337,6 @@
     border-color: var(--c-red);
   }
 
-  /* Custom Hardware Cycle-Box */
   .cycle-box {
     display: grid;
     grid-template-columns: 15px 1fr 15px;
@@ -382,7 +381,6 @@
   }
   .cycle-label:hover { color: var(--vellum); }
 
-  /* Degraded ASCII Amber Capture Buffers (Zero Text Overflow) */
   .amber-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -532,7 +530,7 @@
   }
 
   /* =========================================================================
-     07. MNEMOSYNE-STYLE WEATHERING MATRIX SEQUENCER + BOTTOM ASCII STRIP
+     07. WEATHERING MATRIX SEQUENCER + ALWAYS-ACTIVE ASCII STRIP
      ========================================================================= */
   #matrix-deck {
     border-top: 1px solid var(--col-div);
@@ -548,7 +546,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 6px;
+    gap: 5px;
     flex-wrap: wrap;
     padding-bottom: 4px;
     border-bottom: 1px solid var(--border-inner);
@@ -576,7 +574,7 @@
     font-family: var(--mono);
     font-size: 8px;
     font-weight: bold;
-    padding: 3px 6px;
+    padding: 3px 5px;
     cursor: pointer;
     text-transform: uppercase;
     white-space: nowrap;
@@ -611,7 +609,6 @@
     overflow: visible;
   }
 
-  /* 4-Lane Dotted Step Grid Matching MNEMOSYNE */
   .matrix-grid-box {
     background: var(--well);
     border: 1px solid var(--border-inner);
@@ -641,15 +638,18 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 12px;
-    height: 12px;
+    width: 13px;
+    height: 13px;
     border: 1px solid #35453c;
-    font-size: 7.5px;
+    background: #080a09;
+    font-size: 8.5px;
     color: var(--text-dim);
+    cursor: pointer;
   }
   .m-dice-sq:hover {
     border-color: var(--vellum);
     color: var(--vellum);
+    background: #151c18;
   }
 
   .m-steps-row {
@@ -666,7 +666,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 9.5px;
+    font-size: 9px;
     font-weight: bold;
     color: #2f3d35;
     cursor: pointer;
@@ -701,7 +701,6 @@
     color: var(--vellum);
   }
 
-  /* Standardized Bottom OLED ASCII Weathering Strip (Always Active) */
   #tank-canvas {
     width: 100%;
     height: 88px;
@@ -774,9 +773,10 @@
               </div>
 
               <div class="oled-row">
-                <button class="oled-btn" id="btn-activate" title="Start / Suspend Audio Engine">ACTIVATE</button>
+                <button class="oled-btn" id="btn-activate" title="Start / Suspend Audio Engine">ACT</button>
                 <button class="oled-btn" id="btn-mic" title="Engage Live Audio Input">MIC</button>
                 <button class="oled-btn" id="btn-file" title="Load Audio File">FILE</button>
+                <button class="oled-btn active-amber" id="btn-mon" title="Toggle Incoming Audio Monitor / Bypass Over Frozen Buffers">MON</button>
                 <button class="oled-btn" id="btn-rec" title="Record Stereo WAV Output">REC</button>
                 <input type="file" id="file-upload" accept=".wav,.mp3,.m4a,.flac,.ogg,.aiff,.aif" style="display:none;">
               </div>
@@ -1039,7 +1039,7 @@
 
               <div class="knob-container">
                 <div class="knob-label">VEIL</div>
-                <svg class="knob-svg" id="veil" data-val="0.5" data-default="0.5" viewBox="0 0 44 44" title="Dry / Wet Equal-Power Mix">
+                <svg class="knob-svg" id="veil" data-val="0.5" data-default="0.5" viewBox="0 0 44 44" title="Dry Live / Wet &amp; Captured Equal-Power Blend">
                   <g class="knob-ticks">
                     <line x1="22" y1="1.5" x2="22" y2="4.5" transform="rotate(-135,22,22)"/>
                     <line x1="22" y1="1.5" x2="22" y2="4.5" transform="rotate(-90,22,22)"/>
@@ -1088,13 +1088,13 @@
         <button class="oled-btn" id="btn-expand-viz" style="flex:0 0 auto; padding:3px 7px;" title="Expand Weathering Tank to Full-Frame Backdrop [V]">[V] EXPAND</button>
       </div>
 
-      <!-- MNEMOSYNE-STYLE WEATHERING MATRIX SEQUENCER + ALWAYS-ACTIVE ASCII STRIP -->
+      <!-- WEATHERING MATRIX SEQUENCER + ALWAYS-ACTIVE ASCII STRIP -->
       <div id="matrix-deck">
         <div class="matrix-header">
           <span class="matrix-title">WEATHERING MATRIX</span>
 
           <div class="matrix-controls">
-            <button type="button" class="m-btn active-cyan" id="m-lane-0" data-lane="0" title="Select Lane I (SUBLIMATE)">I. SUBL</button>
+            <button type="button" class="m-btn active-green" id="m-lane-0" data-lane="0" title="Select Lane I (SUBLIMATE)">I. SUBL</button>
             <button type="button" class="m-btn" id="m-lane-1" data-lane="1" title="Select Lane II (UNDERTOW)">II. UNDR</button>
             <button type="button" class="m-btn" id="m-lane-2" data-lane="2" title="Select Lane III (TIDE)">III. TIDE</button>
             <button type="button" class="m-btn" id="m-lane-3" data-lane="3" title="Select Lane IV (TRANSMUTE)">IV. TRNS</button>
@@ -1102,23 +1102,24 @@
 
           <div class="matrix-controls">
             <button type="button" class="m-btn" id="btn-seq-toggle" title="Start / Stop Sequencer [Space]">SEQ: OFF</button>
-            <button type="button" class="m-btn active-vel" id="btn-seq-mod" title="Toggle Parameter Modulation on Selected Lane">MOD</button>
+            <button type="button" class="m-btn active-vel" id="btn-seq-mod" title="Toggle Per-Step Parameter Modulation on Selected Lane">MOD</button>
             <button type="button" class="m-btn" id="btn-seq-hold" title="Hold / Freeze Step Playhead">HOLD</button>
+            <button type="button" class="m-btn" id="btn-seq-dice" title="Roll Random Steps &amp; Per-Step Mod Values for All Lanes">DICE</button>
             <div class="m-btn" id="btn-seq-len" title="Drag Horizontally to Resize Selected Lane (1 - 64 Steps)" style="cursor:ew-resize; touch-action:none;">LEN: 16</div>
-            <button type="button" class="m-btn" id="btn-seq-page" title="Cycle 16-Step Page View (for >16 Steps)">PG: 1/1</button>
+            <button type="button" class="m-btn" id="btn-seq-page" title="Cycle 16-Step Page View">PG: 1/1</button>
             <button type="button" class="m-btn" id="btn-seq-clr" title="Clear Selected Lane Steps">CLR</button>
           </div>
 
-          <!-- 4 Mini Rotary Encoders (PACE, SUS, GROW, DRAG) Matching MNEMOSYNE -->
+          <!-- 4 Mini Rotary Encoders (PACE, SUS, GROW, DRAG) -->
           <div class="mini-knobs-group">
-            <div class="mini-knob-item" id="mk-pace" data-val="0.50" style="color:var(--c-amber);" title="Sequencer Clock Multiplier (PACE)">
+            <div class="mini-knob-item" id="mk-pace" data-val="0.50" style="color:var(--c-amber);" title="Master Clock &amp; Tempo Multiplier (PACE)">
               <span>PACE</span>
               <svg class="mini-knob-svg" viewBox="0 0 26 26">
                 <circle cx="13" cy="13" r="10" fill="#090c0a" stroke="#a67a3c" stroke-width="1.6"/>
                 <line class="mk-ind" x1="13" y1="13" x2="13" y2="5" stroke="#e6e3da" stroke-width="1.6"/>
               </svg>
             </div>
-            <div class="mini-knob-item" id="mk-sus" data-val="0.50" style="color:var(--c-cyan);" title="Step Gate Sustain (SUS)">
+            <div class="mini-knob-item" id="mk-sus" data-val="0.50" style="color:var(--c-cyan);" title="Step Modulation Depth (SUS)">
               <span>SUS</span>
               <svg class="mini-knob-svg" viewBox="0 0 26 26">
                 <circle cx="13" cy="13" r="10" fill="#090c0a" stroke="#487e9e" stroke-width="1.6"/>
@@ -1157,7 +1158,7 @@
   'use strict';
 
   /* ===========================================================================
-     01. AUDIO WORKLET DSP ENGINE (WITH 1.0x UNITY-PITCH REVERSE PLAYBACK FIX)
+     01. AUDIO WORKLET DSP ENGINE (ORIGINAL ASPERITAS DSP + 1.0x REVERSE + MON)
      =========================================================================== */
   const workletString = `
   class SafeDelay {
@@ -1190,7 +1191,8 @@
       this.p = {
         sublimate: 0, alembic: 0.5, thicket: 0, veil: 0.5,
         rhizome: 0, tide: 0, sway: 0, amber: 0, amber2: 0,
-        transmute: 0, distill: 0, ouroboros: 0, entropy: 0, undertow: 0
+        transmute: 0, distill: 0, ouroboros: 0, entropy: 0, undertow: 0,
+        input_mon: 1.0, tempo_mult: 1.0
       };
       this.port.onmessage = (e) => {
         if (e.data.id && this.p[e.data.id] !== undefined) {
@@ -1217,6 +1219,9 @@
       this.sm_transmute = 0;
       this.sm_sway = 0;
       this.sm_entropy = 0;
+      this.sm_mon = 1.0;
+      this.sm_amber = 0;
+      this.sm_amber2 = 0;
       this.ghost_phase = 0;
       this.ph1 = 0;
       this.ph2 = 0;
@@ -1253,8 +1258,12 @@
       const sr = sampleRate;
 
       for (let i = 0; i < outL.length; i++) {
-        let in1 = input ? input[i] : 0;
-        if (Number.isNaN(in1)) in1 = 0;
+        let raw_in = input ? input[i] : 0;
+        if (Number.isNaN(raw_in)) raw_in = 0;
+
+        // Smooth input monitor/bypass gate so live audio can be muted after freezing into Amber
+        this.sm_mon = this.slide(this.p.input_mon, 441.0, 441.0, this.sm_mon);
+        const in1 = raw_in * this.sm_mon;
 
         const sublimate = this.p.sublimate * 100.0;
         const alembic   = this.p.alembic * 100.0;
@@ -1263,19 +1272,20 @@
         const rhizome   = this.p.rhizome * 100.0;
         const tide      = this.p.tide * 100.0;
         const sway      = this.p.sway * 100.0;
-        const sm_amber  = this.p.amber / 100.0;
-        const sm_amber2 = this.p.amber2 / 100.0;
         const transmute = this.p.transmute * 100.0;
         const distill   = this.p.distill * 100.0;
         const ouroboros = this.p.ouroboros * 100.0;
         const entropy   = this.p.entropy * 100.0;
         const undertow  = this.p.undertow * 100.0;
+        const tempoMult = Math.max(0.25, Math.min(4.0, this.p.tempo_mult));
 
-        this.sm_transmute = this.slide(transmute / 100.0, 22050.0, 22050.0, this.sm_transmute);
-        this.sm_sway      = this.slide(sway / 100.0, 22050.0, 22050.0, this.sm_sway);
-        this.sm_entropy   = this.slide(entropy / 100.0, 22050.0, 22050.0, this.sm_entropy);
+        this.sm_transmute = this.slide(transmute / 100.0, 2205.0, 2205.0, this.sm_transmute);
+        this.sm_sway      = this.slide(sway / 100.0, 2205.0, 2205.0, this.sm_sway);
+        this.sm_entropy   = this.slide(entropy / 100.0, 2205.0, 2205.0, this.sm_entropy);
+        this.sm_amber     = this.slide(this.p.amber / 100.0, 1102.0, 1102.0, this.sm_amber);
+        this.sm_amber2    = this.slide(this.p.amber2 / 100.0, 1102.0, 1102.0, this.sm_amber2);
 
-        this.ghost_phase = (this.ghost_phase + (0.2 + this.sm_entropy * 2.0) / sr) % 1.0;
+        this.ghost_phase = (this.ghost_phase + ((0.2 + this.sm_entropy * 2.0) * tempoMult) / sr) % 1.0;
         const bipolar_ghost = Math.sin(this.ghost_phase * this.TWOPI);
         const ghost_mod = bipolar_ghost * Math.pow(this.sm_entropy, 2.0) * 0.5;
 
@@ -1362,7 +1372,7 @@
 
         const freeze_sig = this.amber_freeze.read(88196);
         this.amb_lpf1 = this.amb_lpf1 * (1.0 - amb_deg_alpha) + freeze_sig * amb_deg_alpha;
-        const freeze_in = filtered_wet * (1.0 - sm_amber) + this.amb_lpf1 * sm_amber;
+        const freeze_in = filtered_wet * (1.0 - this.sm_amber) + this.amb_lpf1 * this.sm_amber;
         this.amber_freeze.write(freeze_in);
 
         this.ph1 = (this.ph1 + (2.0 / 88200.0)) % 1.0;
@@ -1375,7 +1385,7 @@
 
         const freeze2_sig = this.amber2_freeze.read(176396);
         this.amb_lpf2 = this.amb_lpf2 * (1.0 - amb_deg_alpha) + freeze2_sig * amb_deg_alpha;
-        const freeze2_in = filtered_wet * (1.0 - sm_amber2) + this.amb_lpf2 * sm_amber2;
+        const freeze2_in = filtered_wet * (1.0 - this.sm_amber2) + this.amb_lpf2 * this.sm_amber2;
         this.amber2_freeze.write(freeze2_in);
 
         this.ph2 = (this.ph2 + (2.0 / 176400.0)) % 1.0;
@@ -1392,14 +1402,16 @@
         const amb1_final = (this.amb_lpf1 * fwd_amt) + (rev1_sig * rev_amt);
         const amb2_final = (this.amb_lpf2 * fwd_amt) + (rev2_sig * rev_amt);
 
-        const parallel_wet = Math.tanh(filtered_wet + (amb1_final * sm_amber) + (amb2_final * sm_amber2));
+        // Parallel blend of live wet tank + captured Amber I & II buffers
+        const parallel_wet = Math.tanh(filtered_wet + (amb1_final * this.sm_amber) + (amb2_final * this.sm_amber2));
 
         const tide_alpha = Math.max(0.001, Math.min(1.0, (400.0 / sr) * this.TWOPI));
         this.tide_lpf = this.tide_lpf * (1.0 - tide_alpha) + parallel_wet * tide_alpha;
         const tide_low = this.tide_lpf;
         const tide_high = parallel_wet - tide_low;
 
-        this.ph_tide = (this.ph_tide + (0.05 + (n_tide * 0.18)) / sr) % 1.0;
+        // TIDE LFO locked to BPM * PACE tempo multiplier
+        this.ph_tide = (this.ph_tide + ((0.05 + (n_tide * 0.25)) * tempoMult) / sr) % 1.0;
         const tide_lfo = Math.sin(this.ph_tide * this.TWOPI);
         const pulse_low = (tide_lfo * 0.5) + 0.5;
         const pulse_high = 1.0 - pulse_low;
@@ -1412,6 +1424,7 @@
         const compressed_wet = tided_wet * (1.0 * (1.0 - n_distill) + (gain_reduction * 3.0) * n_distill);
         const distilled_wet = Math.tanh(compressed_wet);
 
+        // VEIL equal-power blend between live incoming audio (in1) and wet/captured audio
         const dry_level = Math.cos(n_veil * Math.PI * 0.5);
         const wet_level = Math.sin(n_veil * Math.PI * 0.5);
 
@@ -1445,6 +1458,7 @@
     amber2: false,
     amber1Phase: 0,
     amber2Phase: 0,
+    inputMon: true,
 
     isPlaying: false,
     isDrifting: false,
@@ -1468,10 +1482,10 @@
     },
 
     lanes: [
-      { id: 'sublimate', roman: 'I.',   color: '#4e8f60', len: 16, mod: true, steps: new Uint8Array(64) },
-      { id: 'undertow',  roman: 'II.',  color: '#a67a3c', len: 12, mod: true, steps: new Uint8Array(64) },
-      { id: 'tide',      roman: 'III.', color: '#487e9e', len: 14, mod: true, steps: new Uint8Array(64) },
-      { id: 'transmute', roman: 'IV.',  color: '#9e4b4b', len: 16, mod: true, steps: new Uint8Array(64) }
+      { id: 'sublimate', roman: 'I.',   color: '#4e8f60', len: 16, mod: true, steps: new Uint8Array(64), modVals: new Float32Array(64) },
+      { id: 'undertow',  roman: 'II.',  color: '#a67a3c', len: 12, mod: true, steps: new Uint8Array(64), modVals: new Float32Array(64) },
+      { id: 'tide',      roman: 'III.', color: '#487e9e', len: 14, mod: true, steps: new Uint8Array(64), modVals: new Float32Array(64) },
+      { id: 'transmute', roman: 'IV.',  color: '#9e4b4b', len: 16, mod: true, steps: new Uint8Array(64), modVals: new Float32Array(64) }
     ],
 
     micDevices: [{ deviceId: '', label: 'DEFAULT INPUT' }],
@@ -1486,11 +1500,18 @@
     abMix: 0
   };
 
-  // Seed default musical step patterns
-  [0, 5, 10, 14].forEach(i => { state.lanes[0].steps[i] = 1; });
-  [3, 7, 11].forEach(i => { state.lanes[1].steps[i] = 1; });
-  [0, 4, 8, 12].forEach(i => { state.lanes[2].steps[i] = 1; });
-  [2, 9, 14].forEach(i => { state.lanes[3].steps[i] = 1; });
+  function randomizeLaneSteps(lane, density = 0.36) {
+    for (let s = 0; s < 64; s++) {
+      const on = Math.random() < density ? 1 : 0;
+      lane.steps[s] = on;
+      lane.modVals[s] = on ? (0.18 + Math.random() * 0.78) : 0;
+    }
+  }
+
+  // Seed initial musical step patterns + per-step modulation values
+  state.lanes.forEach((lane, idx) => {
+    randomizeLaneSteps(lane, 0.30 + idx * 0.03);
+  });
 
   /* ===========================================================================
      03. TOAST & AUDIO ENGINE WIRING
@@ -1523,6 +1544,12 @@
     }
   }
 
+  function syncTempoToWorklet() {
+    const paceMult = 0.25 + state.miniParams.pace * 2.75; // 0.25x to 3.0x
+    const bpmScale = (state.bpm / 112.0) * paceMult;
+    sendParam('tempo_mult', state.seqRunning ? bpmScale : (state.bpm / 112.0));
+  }
+
   function setKnobValue(knobEl, val, updateBase = true) {
     val = clamp(val, 0, 1);
     const id = knobEl.id;
@@ -1545,6 +1572,8 @@
     });
     sendParam('amber', state.amber1 ? 100 : 0);
     sendParam('amber2', state.amber2 ? 100 : 0);
+    sendParam('input_mon', state.inputMon ? 1.0 : 0.0);
+    syncTempoToWorklet();
   }
 
   async function initAudio() {
@@ -1587,7 +1616,7 @@
   }
 
   /* ===========================================================================
-     04. HARDWARE INPUT CYCLER & FILE INGEST (IPADOS COMPATIBLE)
+     04. HARDWARE INPUT CYCLER & FILE INGEST
      =========================================================================== */
   function syncMicCyclerUI() {
     const dev = state.micDevices[state.micIdx] || { deviceId: '', label: 'DEFAULT INPUT' };
@@ -1671,7 +1700,7 @@
   }
 
   /* ===========================================================================
-     05. MNEMOSYNE-STYLE POLYMETRIC MATRIX SEQUENCER
+     05. POLYMETRIC WEATHERING MATRIX SEQUENCER
      =========================================================================== */
   const bpmEl = document.getElementById('bpm-readout');
   const matrixLanesEl = document.getElementById('matrix-lanes');
@@ -1684,6 +1713,7 @@
       bpmEl.textContent = `${state.bpm} BPM`;
       bpmEl.classList.add('active');
     }
+    syncTempoToWorklet();
   }
 
   function syncMatrixHeaderUI() {
@@ -1704,9 +1734,14 @@
     document.getElementById('btn-seq-page').textContent = `PG: ${state.pageIdx + 1}/${maxPages}`;
   }
 
+  function restoreModulatedBaseParams() {
+    state.lanes.forEach((lane) => {
+      sendParam(lane.id, state.params[lane.id] || 0);
+    });
+  }
+
   function renderMatrixGrid() {
     matrixLanesEl.innerHTML = '';
-    const selLane = state.lanes[state.selectedLaneIdx];
     const pageOffset = state.pageIdx * 16;
 
     state.lanes.forEach((lane, lIdx) => {
@@ -1714,24 +1749,24 @@
       row.className = 'm-lane';
       row.dataset.lane = String(lIdx);
 
-      // Left: Roman numeral + per-lane Dice button
       const tag = document.createElement('div');
       tag.className = 'm-lane-tag';
       tag.style.color = lane.color;
-      tag.innerHTML = `<span>${lane.roman.padEnd(4, ' ')}</span><span class="m-dice-sq" title="Randomize ${lane.id.toUpperCase()} Steps">⚄</span>`;
+      tag.innerHTML = `<span>${lane.roman.padEnd(4, ' ')}</span><span class="m-dice-sq" title="Roll Random Steps &amp; Per-Step Mod Values for ${lane.id.toUpperCase()}">⚄</span>`;
+
       tag.querySelector('span:first-child').addEventListener('click', () => {
         state.selectedLaneIdx = lIdx;
         syncMatrixHeaderUI();
         renderMatrixGrid();
       });
+
       tag.querySelector('.m-dice-sq').addEventListener('click', (e) => {
         e.stopPropagation();
-        for (let s = 0; s < 64; s++) lane.steps[s] = Math.random() < 0.34 ? 1 : 0;
+        randomizeLaneSteps(lane, 0.36);
         renderMatrixGrid();
-        showToast(`${lane.id.toUpperCase()} // DICE ROLLED`);
+        showToast(`${lane.id.toUpperCase()} // DICE & MOD ROLLED`);
       });
 
-      // Center: 16-column dotted grid window (with | / [|] markers like MNEMOSYNE)
       const stepsRow = document.createElement('div');
       stepsRow.className = 'm-steps-row';
       const activeStep = state.seqRunning ? (state.seqTick % lane.len) : -1;
@@ -1755,21 +1790,25 @@
         } else if (isHead && isOn) {
           cell.textContent = '[|]';
         } else if (isOn) {
-          cell.textContent = '|';
+          // Show taller bar for high per-step mod value, shorter bar for subtle mod
+          cell.textContent = (lane.mod && lane.modVals[stepIdx] > 0.55) ? '┃' : '|';
         } else {
           cell.textContent = '·';
         }
 
         if (inRange) {
           cell.addEventListener('click', () => {
-            lane.steps[stepIdx] = lane.steps[stepIdx] ? 0 : 1;
+            const nextState = lane.steps[stepIdx] ? 0 : 1;
+            lane.steps[stepIdx] = nextState;
+            if (nextState === 1 && lane.modVals[stepIdx] <= 0.01) {
+              lane.modVals[stepIdx] = 0.25 + Math.random() * 0.70;
+            }
             renderMatrixGrid();
           });
         }
         stepsRow.appendChild(cell);
       }
 
-      // Right: Polymetric /len counter (click-and-drag horizontally 1..64)
       const lenEl = document.createElement('div');
       lenEl.className = 'm-len';
       lenEl.textContent = `/${lane.len}`;
@@ -1814,25 +1853,29 @@
       state.seqTick++;
     }
 
-    // GROW parameter stochastically mutates step patterns across bars
+    // GROW parameter stochastically mutates step patterns and mod depths over time
     const grow = state.miniParams.grow;
     if (grow > 0.02 && !state.seqHold) {
       state.lanes.forEach((lane) => {
         if (Math.random() < grow * 0.24) {
           const idx = Math.floor(Math.random() * lane.len);
-          lane.steps[idx] = lane.steps[idx] ? 0 : 1;
+          const next = lane.steps[idx] ? 0 : 1;
+          lane.steps[idx] = next;
+          if (next === 1) lane.modVals[idx] = 0.20 + Math.random() * 0.75;
         }
       });
     }
 
-    // Modulate target parameters on active steps
-    const susDepth = 0.25 + state.miniParams.sus * 0.65;
+    // Apply per-step randomized modulation when MOD is active on that lane
+    const susScale = 0.30 + state.miniParams.sus * 1.15;
     state.lanes.forEach((lane) => {
       const pos = state.seqTick % lane.len;
       const gate = lane.steps[pos] === 1;
       const baseVal = state.params[lane.id] || 0;
-      if (lane.mod) {
-        sendParam(lane.id, gate ? clamp(baseVal + susDepth, 0, 1) : baseVal);
+
+      if (lane.mod && gate) {
+        const stepDepth = (lane.modVals[pos] || 0.5) * susScale;
+        sendParam(lane.id, clamp(baseVal + stepDepth, 0, 1));
       } else {
         sendParam(lane.id, baseVal);
       }
@@ -1842,18 +1885,17 @@
   }
 
   /* ===========================================================================
-     06. ALWAYS-ALIVE NOITA-STYLE WEATHERING & AMBER OIL-ART STRIP
+     06. ALWAYS-ALIVE WEATHERING & AMBER OIL-ART STRIP
      =========================================================================== */
   const tankCanvas = document.getElementById('tank-canvas');
   const tankCtx = tankCanvas.getContext('2d', { alpha: false });
   const bgVizCanvas = document.getElementById('bg-viz-canvas');
   const bgVizCtx = bgVizCanvas.getContext('2d', { alpha: false });
 
-  // Material IDs: 0=VOID, 1=AMBER_I, 2=AMBER_II, 3=WEATHERED_SAND, 4=OIL_WAVE
   const TANK_COLS = 116;
   const TANK_ROWS = 11;
   let tankGrid = new Uint8Array(TANK_COLS * TANK_ROWS);
-  let tankColor = new Uint8Array(TANK_COLS * TANK_ROWS); // 0=amber, 1=green, 2=cyan, 3=red
+  let tankColor = new Uint8Array(TANK_COLS * TANK_ROWS);
 
   const TANK_GLYPHS = [' ', '█', '▓', '▒', '≈'];
   const TANK_COLORS = ['#a67a3c', '#4e8f60', '#487e9e', '#9e4b4b', '#e6e3da'];
@@ -1875,7 +1917,6 @@
     }
   }
 
-  // Seed initial geological strata so the bottom strip is alive at all times on boot
   function seedInitialWeatheringStrata() {
     for (let k = 0; k < 7; k++) {
       const cx = Math.floor(((k + 0.5) / 7) * TANK_COLS);
@@ -1903,7 +1944,6 @@
     const weatherRate = clamp(0.04 + patina * 0.45 + thicket * 0.35 + entropy * 0.55 + audioRms * 0.4, 0.04, 0.95);
     const turbulence = clamp(0.12 + tide * 0.65 + sway * 0.55 + undertow * 0.60 + audioRms * 0.5, 0.12, 1.5);
 
-    // Continuous ambient mineral precipitation + Amber I/II crystallization
     if (state.amber1 && Math.random() < 0.10) spawnAmberCluster(1, 0);
     if (state.amber2 && Math.random() < 0.08) spawnAmberCluster(2, 2);
 
@@ -1915,7 +1955,6 @@
       }
     }
 
-    // Bottom-up cellular automata update (falling grains + oil wave sloshing)
     for (let r = TANK_ROWS - 2; r >= 0; r--) {
       const scanDir = (r % 2 === 0) ? 1 : -1;
       for (let step = 0; step < TANK_COLS; step++) {
@@ -1959,7 +1998,6 @@
       }
     }
 
-    // Recycle bottom floor slowly when full so weathering never stagnates
     let bottomFill = 0;
     const lastRowOff = (TANK_ROWS - 1) * TANK_COLS;
     for (let c = 1; c < TANK_COLS - 1; c++) {
@@ -1985,7 +2023,6 @@
 
     if (isBackdrop) targetCtx.globalAlpha = 0.42;
 
-    // Draw downward playhead indicator on top row matching selected sequencer lane
     if (state.seqRunning) {
       const selLane = state.lanes[state.selectedLaneIdx];
       const stepInPage = (state.seqTick % selLane.len) % 16;
@@ -2092,7 +2129,7 @@
     lastMs = nowMs;
 
     if (state.seqRunning) {
-      const paceMult = 0.5 + state.miniParams.pace * 1.5; // 0.5x to 2.0x clock multiplier
+      const paceMult = 0.25 + state.miniParams.pace * 2.75; // 0.25x to 3.0x clock multiplier
       const swingBias = (state.seqTick % 2 === 1) ? (1.0 + state.miniParams.drag * 0.35) : (1.0 - state.miniParams.drag * 0.25);
       const stepDur = ((60.0 / state.bpm) * 0.25 / paceMult) * swingBias;
       state.seqAccumSec += dtSec;
@@ -2220,6 +2257,14 @@
     showToast(`AMBER II (4S): ${state.amber2 ? 'FROZEN' : 'THAWED'}`);
   }
 
+  function toggleInputMonitor() {
+    state.inputMon = !state.inputMon;
+    const btn = document.getElementById('btn-mon');
+    btn.classList.toggle('active-amber', state.inputMon);
+    sendParam('input_mon', state.inputMon ? 1.0 : 0.0);
+    showToast(state.inputMon ? 'INPUT MONITOR // LIVE FEED ACTIVE' : 'INPUT MONITOR // LIVE FEED BYPASSED');
+  }
+
   function toggleSequencer() {
     state.seqRunning = !state.seqRunning;
     const btn = document.getElementById('btn-seq-toggle');
@@ -2227,7 +2272,7 @@
     btn.classList.toggle('active-green', state.seqRunning);
     updateBpmUI();
     if (!state.seqRunning) {
-      syncAllParams();
+      restoreModulatedBaseParams();
       renderMatrixGrid();
     }
     showToast(`SEQUENCER: ${state.seqRunning ? `RUNNING (${state.bpm} BPM)` : 'STOPPED'}`);
@@ -2279,6 +2324,7 @@
         el.dataset.val = v.toFixed(3);
         const ang = -135 + v * 270;
         ind.setAttribute('transform', `rotate(${ang.toFixed(1)}, 13, 13)`);
+        if (mId === 'pace') syncTempoToWorklet();
       };
       updateMini(parseFloat(el.dataset.val));
 
@@ -2316,7 +2362,11 @@
     document.getElementById('btn-seq-mod').addEventListener('click', () => {
       const lane = state.lanes[state.selectedLaneIdx];
       lane.mod = !lane.mod;
+      if (!lane.mod) {
+        sendParam(lane.id, state.params[lane.id] || 0);
+      }
       syncMatrixHeaderUI();
+      renderMatrixGrid();
       showToast(`${lane.id.toUpperCase()} MOD: ${lane.mod ? 'ON' : 'OFF'}`);
     });
 
@@ -2324,6 +2374,12 @@
       state.seqHold = !state.seqHold;
       syncMatrixHeaderUI();
       showToast(`SEQUENCER HOLD: ${state.seqHold ? 'ON' : 'OFF'}`);
+    });
+
+    document.getElementById('btn-seq-dice').addEventListener('click', () => {
+      state.lanes.forEach(lane => randomizeLaneSteps(lane, 0.36));
+      renderMatrixGrid();
+      showToast('ALL LANES // STEPS & PER-STEP MOD ROLLED');
     });
 
     const lenBtn = document.getElementById('btn-seq-len');
@@ -2364,6 +2420,8 @@
     document.getElementById('btn-seq-clr').addEventListener('click', () => {
       const lane = state.lanes[state.selectedLaneIdx];
       lane.steps.fill(0);
+      lane.modVals.fill(0);
+      sendParam(lane.id, state.params[lane.id] || 0);
       renderMatrixGrid();
       showToast(`${lane.id.toUpperCase()} CLEARED`);
     });
@@ -2408,6 +2466,8 @@
       if (e.target.files && e.target.files[0]) ingestAudioFile(e.target.files[0]);
       e.target.value = '';
     });
+
+    document.getElementById('btn-mon').addEventListener('click', toggleInputMonitor);
 
     document.getElementById('btn-mic-prev').addEventListener('click', () => {
       state.micIdx = (state.micIdx - 1 + state.micDevices.length) % state.micDevices.length;
